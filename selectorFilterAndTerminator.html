@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Pipeline</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<style>
+body {
+    margin: 1em;
+    font-family: "Myriad Set Pro","Lucida Grande","Helvetica Neue","Helvetica","Arial","Verdana","sans-serif";
+}
+h3 {
+    border-bottom: 1px solid #ccc;
+}
+header {
+    padding-bottom: 0.5em;
+}
+header table {
+    width: 100%;
+}
+header th,
+header td {
+}
+.frame {
+    width: 100%;
+}
+.frame th {
+    height: 1em;
+    padding-left: 0.5em;
+    background-color: #eee;
+    border: 1px solid #ccc;
+}
+.frame td {
+    width: 33%;
+    padding: 0.5em;
+    vertical-align: top;
+    border: 1px solid #ccc;
+}
+.root {
+    width: 100%;
+    min-height: 100px;
+    padding-left: 0;
+    padding-bottom: 2em;    
+}
+.children {
+    display: none;
+}
+.children ul {
+    padding-left: 1.3em;
+    margin-bottom: 0;
+}
+.children.top {
+    display: block;
+}
+.children.top > ul {
+    padding-left: 0;
+}
+.folder,
+.file,
+.filter {
+    list-style-type: none;
+    cursor: pointer;
+    -webkit-user-select: none;
+}
+.base .glyphicon {
+    margin-right: 0.5em;
+    color: #ec0;
+}
+.button-selectPath {
+    display: block;
+    margin: 0 0 0 auto;
+}
+.folder .glyphicon {
+    color: #ec0;
+}
+.file .glyphicon {
+    color: #eec
+}
+.filters {
+    width: 100%;
+    min-height: 100px;
+    padding-bottom: 2em;    
+}
+.filters ul {
+    padding-left: 0;
+    margin-bottom: 0;
+}
+.filters. ul {
+    padding-left: 0;
+}
+.terminator ul {
+    padding: 0;
+    list-style-type: none;
+}
+.terminator input[type=radio] {
+    margin-right: 0.5em;
+}
+.terminator-saveas-form {
+    margin-left: 1.4em;
+}
+.terminator-saveas-form textarea {
+    width: 100%;
+}
+.terminator-saveas-test {
+    font-size: 80%;
+}
+footer {
+    padding-top: 0.5em;
+    text-align: right;
+}
+.button {
+    width: 8em;
+    border: 0;
+    border-radius: 5px;   
+    background-color: #eee;
+}
+.button-run,
+.button-forFolder {
+    opacity: 0.2;
+    cursor: default;
+}
+.button.active {
+    opacity: 1;
+    cursor: pointer;
+}
+.button-refresh {
+    float: left;
+}
+.button-run {
+    background-color: #4488F6;
+    color: #fff;
+    cursor: default;
+}
+.log {
+    margin-top: 2em;
+    padding: 0 1em;
+    font-size: 90%;
+    border-left: 2px solid #4488F6; 
+}
+.log.error {
+    border-left: 2px solid #d3542f; 
+}
+.log .error {
+    color: #d3542f;
+}
+.terminator-saveas-test .label {
+    margin-right: 0.5em;
+    color: #fff;
+    background-color: #4488F6;
+    border-radius: 10px;
+    font-size: 100%;
+    font-weight: normal;
+}
+.terminator-saveas-test .label.error {
+    background-color: #d3542f;
+}
+.terminator-saveas-test .path {
+    word-break: break-word;
+}
+</style>
+</head>
+<body>
+
+<h1>Pipeline</h1>
+
+<header>
+    <table>
+        <tr>
+            <td class="base"><span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span><span class="path">No Folder Selected.</span></td>
+            <td><button class="button button-selectPath">Select</button></td>
+        </tr>
+    </table>
+</header>
+
+<table class="frame">
+    <tr>
+        <th>Selector</th>
+        <th>Filters</th>
+        <th>Terminator</th>
+    </tr>
+    <tr>
+        <td>
+            <form>
+                <ul class="root">
+                </ul>
+            </form>
+        </td>
+        <td>
+            <div class="filters">
+                <ul class="list"></ul>
+            </div>
+        </td>
+        <td>
+            <div class="terminator" style="display:none">
+                <form>
+                    <ul>
+                        <li><label><input type="radio" name="terminator" value="none">none</label></li>
+                        <li><label><input type="radio" name="terminator" value="console" checked>console</label></li>
+                        <li><label><input type="radio" name="terminator" value="overwrite">overwrite</label></li>
+                        <li>
+                            <label><input type="radio" name="terminator" value="saveas">save as ...</label>
+                            <p class="terminator-saveas-form">
+                                <textarea>selectedFilePath.replace( /\.txt$/, ".html" )</textarea>
+                                <br>
+                                <span class="terminator-saveas-test" style="display:none"><span class="label">e.g.</span><span class="path"></span></span>
+                            </p>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<footer>
+    <button class="button button-refresh button-forFolder">Refresh</button>
+    <button class="button button-saveSetting button-forFolder">Save Settings</button>
+    <button class="button button-run">Run</button>
+</footer>
+
+<div class="log"></div>
+
+<script type="text/x-template" class="template template-subFolder">
+    <input type="checkbox">
+    <span class="icon glyphicon glyphicon-folder-close" aria-hidden="true"></span>
+    <span class="name">{name}</span>
+    <div class="children">
+        <ul class="folders"></ul>
+        <ul class="files"></ul>
+    </div>
+</script>
+
+<script type="text/x-template" class="template template-file">
+    <input type="checkbox">
+    <span class="icon glyphicon glyphicon-file" aria-hidden="true"></span>
+    <span class="name">{name}</span>
+</script>
+
+<script type="text/javascript" src="js/dragAnd.js"></script>
+<script>
+
+var PATH = require( 'path' );
+
+/**
+Selector Class
+*/
+var Selector = function ( container ) {
+
+    this.container = container;
+
+    // set drag and drop: filter to selector
+    this.dragAndDrop = new DragAnd.Drop();
+    this.dragAndDrop.addDroppable( this.container );
+    this.container.addEventListener( "drop", function ( e ) {
+        if ( e.detail.draggable.model instanceof Filter ) {
+            e.detail.draggable.model.remove();
+        }
+    } );
+
+}
+Selector.prototype = {
+
+    container: null,
+    dragAndDrop: null,
+    root: null,
+
+    loadFolder: function ( path ) {
+
+        this.container.innerHTML = "";
+        this.root = new Folder( path, null, this.container, this );
+        this.root.open();
+
+    },
+
+    addDraggable: function ( element, model ) {
+        this.dragAndDrop.addDraggable( element, model );
+    },
+
+    addDroppable: function ( element ) {
+        this.dragAndDrop.addDroppable( element );
+    },
+
+    getSelectedFiles: function () {
+        var files = new Array();
+        if ( this.root ) {
+            this.root.getSelectedFiles( files );
+        }
+        return files;
+    }
+
+}
+
+/**
+Folder Class
+*/
+var Folder = function ( path, info, container, selector ) {
+
+    var folder = this;
+
+    this.path = path;
+    this.info = info;
+    this.container = container;
+    this.selector = selector;
+    this.isOpen = false;
+    this.isSelected = false;
+
+    // create element
+    this.element = document.createElement( "li" );
+    this.element.setAttribute( "class", "folder" );
+    this.container.appendChild( this.element );
+    if ( ! this.info ) { // is root
+        this.element.innerHTML = this.template.replace( /{name}/, "root" ) 
+    }
+    else {
+        this.element.innerHTML = this.template.replace( /{name}/, this.info.name ) 
+    }
+
+    // attach event
+    var clickables = this.element.querySelectorAll( ".icon,.name" );
+    for ( var i = 0; i < clickables.length; i++ ) {
+        clickables[ i ].addEventListener( "click", function ( e ) {
+            if ( folder.isOpen ) {
+                folder.close();
+                folder.isOpen = false;
+            }
+            else {
+                folder.open();
+                folder.isOpen = true;
+            }
+        } );
+    }
+
+    this.element.querySelector( "input[type=checkbox]" ).addEventListener( "click", function () {
+        folder.toggleSelector();
+    } );
+
+    // create children
+    this.subFolders = new Array();
+    this.files = new Array();
+
+    fileSystem.getFiles( {
+        path: this.path,
+        success: function ( path, files ) {
+            for ( var i = 0; i < files.length; i++ ) {
+                if ( files[ i ].isDirectory ) {
+                    folder.subFolders.push( 
+                        new Folder(
+                            PATH.resolve( folder.path + "/" + files[ i ].name ),
+                            files[ i ],
+                            folder.element.querySelector( ".children > .folders" ),
+                            folder.selector
+                        )
+                    );
+                }
+                else {
+                    folder.files.push( 
+                        new File(
+                            PATH.resolve( folder.path + "/" + files[ i ].name ),
+                            files[ i ],
+                            folder.element.querySelector( ".children > .files" ),
+                            folder.selector
+                        ) 
+                    ); 
+                }
+            }
+        },
+        error: function ( path, error ) {
+            console.log( path );
+            console.log( error );
+        }
+    } );
+
+}
+Folder.prototype = {
+
+    path: "",
+    info: null,
+    subFolders: null,
+    files: null,
+    template: document.querySelector( ".template-subFolder" ).innerHTML,
+    container: null,
+    selector: null,
+    element: null,
+    isOpen: false,
+    isSelected: false,
+
+    open: function () {
+        this.element.querySelector( ".children" ).style.display = "block";
+        this.element.querySelector( ".icon" ).setAttribute( "class", "icon glyphicon glyphicon-folder-open" );
+    },
+
+    close: function () {
+        this.element.querySelector( ".children" ).style.display = "none";
+        this.element.querySelector( ".icon" ).setAttribute( "class", "icon glyphicon glyphicon-folder-close" );
+    },
+
+    show: function () {
+        this.element.style.display = "block";
+    },
+
+    hide: function () {
+        this.element.style.display = "none";
+    },
+
+    toggleSelector: function () {
+
+        if ( this.isSelected ) {
+            this.unselect();
+        }
+        else {
+            this.select();
+        }
+
+    },
+
+    select: function () {
+
+        this.isSelected = true;
+        this.element.querySelector( "input[type=checkbox]" ).checked = true; 
+
+        // select children
+        for ( var i = 0; i < this.subFolders.length; i++ ) {
+            this.subFolders[ i ].select();
+        }
+        for ( var i = 0; i < this.files.length; i++ ) {
+            this.files[ i ].select();
+        }
+
+    },
+
+    unselect: function () {
+
+        this.isSelected = false;
+        this.element.querySelector( "input[type=checkbox]" ).checked = false; 
+
+        // unselect children
+        for ( var i = 0; i < this.subFolders.length; i++ ) {
+            this.subFolders[ i ].unselect();
+        }
+        for ( var i = 0; i < this.files.length; i++ ) {
+            this.files[ i ].unselect();
+        }
+
+    },
+
+    getSelectedFiles: function ( collector ) {
+
+        for ( var i = 0; i < this.files.length; i++ ) {
+            if ( this.files[ i ].isSelected ) {
+                collector.push( this.files[ i ] );
+            }
+        }
+        for ( var i = 0; i < this.subFolders.length; i++ ) {
+            this.subFolders[ i ].getSelectedFiles( collector );
+        }
+
+        return collector;
+
+    },
+
+    getFilesByPath: function ( paths, collector ) {
+
+        for ( var i = 0; i < this.files.length; i++ ) {
+            for ( var j = 0; j < pathes.length; j++ ) {
+                if ( this.files[ i ].path == paths[ j ] ) {
+                    collector.push( this.files[ i ] );
+                }
+            }
+        }
+        for ( var i = 0; i < this.subFolders.length; i++ ) {
+            this.subFolders[ i ].getFilesByPath( paths, collector );
+        }
+
+    }
+
+};
+
+/**
+File Class
+*/
+var File = function ( path, info, container, selector ) {
+
+    var file = this;
+
+    this.path = path;
+    this.info = info;
+    this.container = container;
+    this.selector = selector;
+    this.isSelected = false;
+    this.isActive = true;
+
+    this.element = document.createElement( "li" );
+    this.element.setAttribute( "class", "file" );
+    this.container.appendChild( this.element );
+    this.element.innerHTML = this.template.replace( /{name}/, this.info.name ) 
+
+    // attach event
+    this.element.querySelector( "input[type=checkbox]" ).addEventListener( "click", function () {
+        file.toggleSelector();
+    }, false );
+
+    // set draggable
+    this.selector.addDraggable( this.element, this );
+
+    // is selected
+    if ( Pipeline.selectedFilePaths ) {
+        for ( var i = 0; i < Pipeline.selectedFilePaths.length; i++ ) {
+            if ( this.path == Pipeline.selectedFilePaths[ i ] ) {
+                this.select();
+                break;
+            }
+        }
+    }
+
+    // is filter?
+    if ( Pipeline.filterPaths ) {
+        for ( var i = 0; i < Pipeline.filterPaths.length; i++ ) {
+            if ( this.path == Pipeline.filterPaths[ i ].path ) {
+                Pipeline.filterize( this, Pipeline.filterPaths[ i ].isSelected );
+                break;
+            }
+        }
+    }
+
+    setTimeout( function () { Pipeline.canRun() }, 0 );
+
+}
+File.prototype = {
+
+    path: "",
+    info: null,
+    template: document.querySelector( ".template-file" ).innerHTML,
+    container: null,
+    selector: null,
+    element: null,
+    isSelected: false,
+    isActive: true,
+    isShow: false,
+
+    show: function () {
+        this.element.style.display = "block";
+    },
+
+    hide: function () {
+        this.element.style.display = "none";
+    },
+
+    toggleSelector: function () {
+        if ( this.isSelected ) {
+            this.unselect();
+        }
+        else {
+            this.select();
+        }
+    },
+
+    select: function () {
+        this.isSelected = true;
+        this.element.querySelector( "input[type=checkbox]" ).checked = true; 
+    },
+
+    unselect: function () {
+        this.isSelected = false;
+        this.element.querySelector( "input[type=checkbox]" ).checked = false; 
+    },
+
+    active: function () {
+        this.isActive = true;
+        this.element.style.opacity = "1";
+        this.element.querySelector( "input" ).removeAttribute( "disabled" );
+        this.element.setAttribute( "draggable", true );
+    },
+
+    inactive: function () {
+        this.isActive = false;
+        this.element.style.opacity = "0.4";
+        this.element.querySelector( "input" ).setAttribute( "disabled", true );
+        this.element.removeAttribute( "draggable", false );
+    }
+
+};
+
+/**
+Filters Class
+*/
+var Filters = function ( container, selector ) {
+
+    var filters = this;
+
+    this.container = container;
+    this.selector = selector;
+    this.list = new Array();
+    this.sorter = new DragAnd.Sort();
+
+    // set drag and drop for move files
+    // selector to filter
+    this.selector.addDroppable( this.container );
+    this.container.addEventListener( "drop", function ( e ) {
+        if ( e.detail.draggable.model instanceof File ) {
+
+            // move the file to pipeline and transform the file to a filter. 
+            filters.makeFilter( e.detail.draggable.model );
+
+        }
+    } );
+
+    // set drag and drop for sort filters
+    this.sorter.setContainer( this.container.querySelector( ".list" ), function ( sorter ) {
+        filters.sort( sorter );
+    } );
+
+}
+Filters.prototype = {
+
+    container: null,
+    selector: null,
+    list: null,
+    sorter: null,
+
+    addSortable: function ( element, model ) {
+        this.sorter.addSortable( element, model );
+    },
+
+    makeFilter: function ( file, isSelected ) {
+
+        file.inactive();
+
+        var filter = new Filter(
+            file,
+            this.container.querySelector( ".list" ),
+            this
+        );
+
+        this.list.push( filter );
+
+        if ( file.isSelected ) {
+            file.unselect();
+        }
+
+        if ( isSelected ) {
+            filter.select();
+        }
+
+        setTimeout( function () { Pipeline.canRun() }, 0 );
+
+    },
+
+    remove: function ( filter ) {
+
+        this.sorter.removeSortable( filter.element );
+
+        this.container.querySelector( ".list" ).removeChild( filter.element );
+        var newList = new Array();
+        for ( var i = 0; i < this.list.length; i++ ) {
+            if ( this.list[ i ] != filter ) {
+                newList.push( this.list[ i ] );
+            }
+        }
+        this.list = newList;
+
+    },
+
+    sort: function ( sorter ) {
+
+        var newList = new Array();
+        for ( var i = 0; i < sorter.sortables.length; i++ ) {
+            newList.push( sorter.sortables[ i ].model );
+        }
+        this.list = newList;
+
+    },
+
+    getFilters: function () {
+        var selectedFilters = new Array();
+        for ( var i = 0; i < this.list.length; i++ ) {
+            if ( this.list[ i ].isSelected ) {
+                selectedFilters.push( this.list[ i ] );
+            }
+        }
+        return selectedFilters;
+    },
+
+    clear: function () {
+        this.list = new Array();
+        this.container.querySelector( ".list" ).innerHTML = "";
+    }
+
+}
+
+/**
+Filter Class
+*/
+var Filter = function ( file, container, filters ) {
+
+    var filter = this;
+
+    this.file = file;
+    this.container = container;
+    this.filters = filters;
+
+    this.isSelected = false;
+    this.element = document.createElement( "li" );
+    this.element.setAttribute( "class", "filter" );
+    this.container.appendChild( this.element );
+    this.element.innerHTML = this.template.replace( /{name}/, this.file.info.name ) 
+
+    this.isReady = false;
+
+    // attach event
+    this.element.querySelector( "input[type=checkbox]" ).addEventListener( "click", function () {
+        filter.toggleSelector();
+    }, false );
+
+    // set draggable
+    this.filters.selector.addDraggable( this.element, this );
+    // set sortable
+    this.filters.addSortable( this.element, this );
+
+    // test
+    this.test();
+
+}
+Filter.prototype = {
+
+    file: null,
+    container: null,
+    filters: null,
+    template: document.querySelector( ".template-file" ).innerHTML,
+    func: null,
+    isReady: false,
+    isSelected: false,
+
+    set: function ( code ) {
+        try {
+            eval( code );
+            this.func = filter; // filter is reserved keyword in filter file.
+            if ( this.func instanceof Function ) {
+                this.isReady = true;
+            }
+        } catch ( e ) {
+            alert( this.file.path + " is invalid filter file" );
+            console.log( this.file.path );
+            console.log( e );
+        }
+    },
+
+    exec: function ( content, context, next ) {
+        return this.func( content, context, next );
+    },
+
+    toggleSelector: function () {
+
+        if ( this.isSelected ) {
+            this.unselect();
+        }
+        else {
+            this.select();
+        }
+
+    },
+
+    select: function () {
+
+        this.isSelected = true;
+        this.element.querySelector( "input[type=checkbox]" ).checked = true; 
+
+    },
+
+    unselect: function () {
+
+        this.isSelected = false;
+        this.element.querySelector( "input[type=checkbox]" ).checked = false; 
+
+    },
+
+    test: function () {
+
+        var model = this;
+
+        fileSystem.open( {
+            path: model.file.path,
+            success: function ( path, content ) {
+                try {
+                    var filter = null;
+                    eval( content );
+                    if ( ! filter instanceof Function ) {
+                        alert( model.file.path + " is invalid filter file" );
+                        model.remove();
+                    }
+                } catch ( e ) {
+                    alert( model.file.path + " is invalid filter file" );
+                    console.log( model.file.path );
+                    console.log( e );
+                    model.remove();
+                }
+            },
+            error: function ( path, err ) {
+                alert( model.file.path + " is invalid filter file" );
+                console.log( path );
+                console.log( err );
+                model.remove();
+            }
+        } );
+
+    },
+
+    load: function ( junction ) {
+
+        var filter = this;
+
+        fileSystem.open( {
+            path: this.file.path,
+            success: function ( path, content ) {
+                filter.set( content );
+                if ( junction ) {
+                    junction();
+                }
+            },
+            error: function ( path, err ) {
+                console.log( path );
+                console.log( err );
+            }
+        } );
+
+    },
+
+    remove: function () {
+        this.file.active();
+        this.filters.remove( this );
+    }
+
+};
+
+/**
+Terminator Class
+*/
+var Terminator = function ( container, selector ) {
+
+    var terminator = this;
+
+    this.container = container;
+    this.selector = selector;
+    this.form = this.container.querySelector( "form" );
+
+    var textarea = this.form.querySelector( ".terminator-saveas-form textarea" );
+
+    textarea.addEventListener( "keyup", function () {
+        terminator.simulateSaveasExp( this.value );
+    } )
+    textarea.addEventListener( "focus", function () {
+        terminator.simulateSaveasExp( this.value );
+        terminator.container.querySelector( ".terminator-saveas-test" ).style.display = "block";
+    } )
+    textarea.addEventListener( "blur", function () {
+        terminator.container.querySelector( ".terminator-saveas-test" ).style.display = "none";
+    } )
+
+}
+Terminator.prototype = {
+
+    container: null,
+    selector: null,
+    form: null,
+
+    getFormData: function ( data ) {
+
+        return {
+            terminator: this.form.terminator.value,
+            saveasExp: this.form.querySelector( ".terminator-saveas-form textarea" ).value
+        }
+
+    },
+
+    setFormData: function ( data ) {
+
+        this.form.terminator.value = data.terminator;
+        if ( data.saveasExp ) {
+            this.form.querySelector( ".terminator-saveas-form textarea" ).value = data.saveasExp;
+            this.simulateSaveasExp( data.saveasExp );
+        }
+
+    },
+
+    exec: function ( path, content, context, next ) {
+
+        var formData = this.getFormData();
+        if ( formData.terminator == "console" ) {
+            console.log( path );
+            console.log( content );
+            next();
+        }
+        else if ( formData.terminator == "overwrite" ) {
+
+            fileSystem.save( {
+                path: path,
+                content: content,
+                success: function ( path ) {
+                    Pipeline.log( "Save: " +  path );
+                    next();
+                },
+                error: function ( path, error ) {
+                    Pipeline.error( "Can't save: " +  path );
+                    console.log( path );
+                    console.log( error );
+                    next();
+                }
+            } );
+
+        }
+        else if ( formData.terminator == "saveas" ) {
+
+            var saveas = this.getSaveasPath( path );
+
+            if ( saveas ) {
+
+                fileSystem.save( {
+                    path: saveas,
+                    content: content, 
+                    success: function ( path ) {
+                        Pipeline.log( "Save: " +  path );
+                        next();
+                    },
+                    error: function ( path, error ) {
+                        Pipeline.error( "Can't save: " +  path );
+                        console.log( path );
+                        console.log( error );
+                        next();
+                    }
+                } );
+
+            }
+            else {
+                Pipeline.error( "save as: can't get path for save: " + path );
+                next();
+            }
+
+        }
+        else { // none
+            next();
+        }
+
+    },
+
+    clear: function () {
+        this.getFormData( {
+            terminator: "console",
+            saveasExp: this.form.querySelector( ".terminator-saveas-form textarea" ).innerHTML
+        } );
+    },
+
+    getSaveasPath: function ( path ) {
+
+        var terminator = this;
+        var selectedFilePath = path;
+
+        try {
+            path = ( function () { return eval( terminator.form.querySelector( ".terminator-saveas-form textarea" ).value ) } )();
+            return path;
+        }
+        catch ( e ) {
+            console.log( e );
+            return false;
+        }
+
+    },
+
+    simulateSaveasExp: function ( exp ) {
+        var files = this.selector.getSelectedFiles();
+        if ( files[ 0 ] ) {
+            var selectedFilePath = files[ 0 ].path;
+            try {
+                selectedFilePath = ( function () { return eval( exp ) } )();
+                this.container.querySelector( ".terminator-saveas-test .label" ).setAttribute( "class", "label" );
+                this.container.querySelector( ".terminator-saveas-test .path" ).innerHTML = selectedFilePath;
+            }
+            catch ( e ) {
+                this.container.querySelector( ".terminator-saveas-test .label" ).setAttribute( "class", "label error" );
+                this.container.querySelector( ".terminator-saveas-test .path" ).innerHTML = e;
+            }
+        }
+        else {
+            this.container.querySelector( ".terminator-saveas-test .label" ).setAttribute( "class", "label error" );
+            this.container.querySelector( ".terminator-saveas-test .path" ).innerHTML = "No File Selected."
+        }
+    }
+
+}
+
+/**
+Worker Class
+*/
+var Worker = function ( selector, filters, terminator ) {
+
+    var worker = this;
+
+    this.selector = selector;
+    this.filters = filters;
+    this.terminator = terminator;
+
+        document.querySelector( "body" ).addEventListener( "click", function ( e ) {
+            if ( e.target.tagName == "INPUT" ) {
+                worker.canRun();
+            }
+        } );
+
+}
+Worker.prototype = {
+
+    selector: null,
+    filters: null,
+    terminator: null,
+
+    canRun: function () {
+
+        var files = this.selector.getSelectedFiles();
+        var filters = this.filters.getFilters();
+
+        if ( files && files.length && filters && filters.length ) {
+            document.querySelector( ".button-run" ).setAttribute( "class", "button button-run active" );
+            return true;
+        }
+        else {
+            document.querySelector( ".button-run" ).setAttribute( "class", "button button-run" );
+            return false;
+        }
+
+    },
+
+    run: function () {
+
+        if ( ! this.canRun() ) {
+            return;
+        }
+
+        Pipeline.clearlog();
+
+        var worker = this;
+        var filters = this.filters.getFilters();
+        var counter = 0;
+
+        var junction = function () {
+            counter++;
+            if ( counter == filters.length ) {
+                worker.exec();
+            }
+        }
+
+        for ( var i = 0; i < filters.length; i++ ) {
+            filters[ i ].load( junction );
+        }
+
+    },
+
+    exec: function () {
+
+        var worker = this;
+
+        var files = this.selector.getSelectedFiles();
+
+        var globalContext = {
+            root: this.selector.root
+        };
+
+        var done = 0;
+        var junction = function () {
+            done++;
+            if ( done == files.length ) {
+                worker.finalization();
+            }
+        }
+
+        var filters = this.filters.getFilters();
+
+        for ( var i = 0; i < files.length; i++ ) {
+
+            ( function () {
+
+                var fileNumber = i;
+
+                fileSystem.open( {
+                    path: files[ i ].path,
+                    success: function ( path, content ) {
+
+                        Pipeline.log( "Open: " + path );
+
+                        var context = {
+                            path: path,
+                            info: files[ fileNumber ].info,
+                            globalContext: globalContext
+                        }
+
+                        var counter = 0;
+                        var iterator = function ( content ) {
+
+                            if ( content === false ) {
+                                // abort
+                                junction();
+                                return;
+                            }
+
+                            counter++;                          
+
+                            if ( counter == filters.length ) {
+                                if ( worker.terminator ) {
+                                    worker.terminator.exec( path, content, context, iterator )
+                                }
+                                else {
+                                    junction();
+                                }   
+                            }
+                            else if ( counter == filters.length + 1 ) { // done terminator
+                                junction();
+                            }
+                            else {
+                                filters[ counter ].exec( content, context, iterator );
+                            }
+                        }
+                        filters[ 0 ].exec( content, context, iterator );
+
+                    },
+                    error: function ( path, error ) {
+                        Pipeline.error( "Can't open: " + path );
+                        console.log( path );
+                        console.log( error );
+                        junction();
+                    }
+                } );
+
+            } )();
+
+        }
+
+    },
+
+    finalization: function () {
+        Pipeline.log( "All done." );
+        Pipeline.refresh(); 
+    }
+
+}
+
+/**
+Main
+*/
+
+var Pipeline = {
+
+    selector: null,
+    filters: null,
+    terminator: null,
+    worker: null,
+
+    saveSettings: function ( path ) {
+
+        if ( ! Pipeline.isReady ) {
+            return;
+        }
+
+        Pipeline.storeSelectedFilePaths();
+        Pipeline.storeFilterPaths();
+
+        var settings = {
+            selectedFilePaths: Pipeline.selectedFilePaths,
+            filterPaths: Pipeline.filterPaths,
+            terminator: Pipeline.terminator.getFormData()
+        };
+
+        var path = PATH.resolve( Pipeline.selector.root.path + "/.pipeline" );
+
+        fileSystem.save( {
+            path: path,
+            content: JSON.stringify( settings ),
+            success: function ( path ) {
+                alert( "Saved Settings as " + path );
+            },
+            error: function ( path, error ) {
+                console.log( path );
+                console.log( error );
+            }
+        } );
+
+    },
+
+    loadSettings: function ( path, callback ) {
+
+        fileSystem.open( {
+            path: PATH.resolve( path + "/.pipeline" ),
+            success: function ( path, content ) {
+
+                var settings = JSON.parse( content );
+                Pipeline.selectedFilePaths = settings.selectedFilePaths;
+                Pipeline.filterPaths = settings.filterPaths;
+                Pipeline.terminator.setFormData( settings.terminator );
+                if ( callback ) {
+                    callback();
+                }
+
+            },
+            error: function ( path, error ) {
+
+                console.log( error );
+
+                Pipeline.selectedFilePaths = new Array();
+                Pipeline.filterPaths = new Array();
+
+                if ( callback ) {
+                    callback();
+                }
+
+            },
+        } );
+
+    },
+
+    initialize: function ( path ) {
+
+        Pipeline.wait();
+
+        Pipeline.loadSettings( path, function () {
+
+            Pipeline.terminator.clear();
+            Pipeline.filters.clear();
+
+            document.querySelector( ".path" ).innerHTML = path;
+            Pipeline.selector.loadFolder( path );
+
+            Pipeline.ready();
+
+        } );
+
+    },
+
+    refresh: function () {
+
+        if ( ! Pipeline.isReady ) {
+            return;
+        }
+
+        Pipeline.storeSelectedFilePaths();
+        Pipeline.storeFilterPaths();
+
+        Pipeline.filters.clear();
+
+        var frame = document.querySelector( ".frame" );
+        frame.style.minHeight = frame.offsetHeight + "px"; 
+
+        var path = Pipeline.selector.root.path;
+        Pipeline.selector.loadFolder( path );
+
+    },
+
+    selectedFilePaths: null,
+    storeSelectedFilePaths: function () {
+
+        Pipeline.selectedFilePaths = new Array();
+        var selectedFilePaths = new Array();        
+        Pipeline.selector.root.getSelectedFiles( selectedFilePaths );
+        for ( var i = 0; i < selectedFilePaths.length; i++ ) {
+            Pipeline.selectedFilePaths.push( selectedFilePaths[ i ].path );
+        }
+
+    },
+
+    filterPaths: null,
+    storeFilterPaths: function () {
+
+        Pipeline.filterPaths = new Array();
+        for ( var i = 0; i < Pipeline.filters.list.length; i++ ) {
+            Pipeline.filterPaths.push( { 
+                path: Pipeline.filters.list[ i ].file.path,
+                isSelected: Pipeline.filters.list[ i ].isSelected
+            } );
+        }
+
+    },
+
+    filterize: function ( file, isSelected ) {
+        Pipeline.filters.makeFilter( file, isSelected );
+    },
+
+    canRun: function () {
+        Pipeline.worker.canRun();
+    },
+
+    run: function () {
+
+        if ( ! Pipeline.isReady ) {
+            return;
+        }
+
+        Pipeline.worker.run();
+    },
+
+    log: function ( log ) {
+        document.querySelector( ".log" ).innerHTML = document.querySelector( ".log" ).innerHTML +  log + "<br>";
+        console.log( log );
+    },
+
+    error: function ( log )  {
+        document.querySelector( ".log" ).setAttribute( "class", "log error" );
+        log = "<span class='error'>" + log + "</span>"
+        Pipeline.log( log );
+    },
+
+    clearlog: function () {
+        document.querySelector( ".log" ).setAttribute( "class", "log" );
+        document.querySelector( ".log" ).innerHTML = "";
+    },
+
+    isReady: false,
+    ready: function () {
+
+        document.querySelector( ".base .glyphicon" ).setAttribute( "class", "glyphicon glyphicon-folder-open" );
+
+        var buttons = document.querySelectorAll( ".button-forFolder" );
+        for ( var i = 0; i < buttons.length; i++ ) {
+            buttons[ i ].setAttribute( "class", buttons[ i ].getAttribute( "class" ) + " active" );
+        }
+        document.querySelector( ".terminator" ).style.display = "block";
+
+        Pipeline.isReady = true;
+
+    },
+
+    wait: function () {
+
+        document.querySelector( ".base .glyphicon" ).setAttribute( "class", "glyphicon glyphicon-folder-close" );
+
+        var buttons = document.querySelectorAll( ".button-forFolder" );
+        for ( var i = 0; i < buttons.length; i++ ) {
+            buttons[ i ].setAttribute( "class", buttons[ i ].getAttribute( "class" ).replace( / active/, "" ) );
+        }
+        document.querySelector( ".terminator" ).style.display = "block";
+
+        Pipeline.isReady = false;
+
+    }
+
+}
+
+window.onFoul = function () {
+
+    // create selector
+    Pipeline.selector = new Selector( document.querySelector( ".root" ) );
+
+    // create filters
+    Pipeline.filters = new Filters( document.querySelector( ".filters" ), Pipeline.selector )
+
+    // create terminator
+    Pipeline.terminator = new Terminator( document.querySelector( ".terminator" ), Pipeline.selector );
+
+    // create worker
+    Pipeline.worker = new Worker( 
+        Pipeline.selector,
+        Pipeline.filters,
+        Pipeline.terminator
+    );
+
+    // set base folder selector
+    document.querySelector( ".button-selectPath" ).addEventListener( "click", function () {
+        fileSystem.selectFolder( {
+            path: "", 
+            callback: function ( path ) {
+                if ( path ) {
+                    Pipeline.initialize( path );
+                }
+            }
+        } )
+    } );
+
+    // set refresh button
+    document.querySelector( ".button-refresh" ).addEventListener( "click", function () {
+        Pipeline.refresh();
+    } );
+
+    // set save settings button
+    document.querySelector( ".button-saveSetting" ).addEventListener( "click", function () {
+        Pipeline.saveSettings();
+    } );
+
+    // set run button
+    document.querySelector( ".button-run" ).addEventListener( "click", function () {
+        Pipeline.run();
+    } );
+
+}
+
+</script>
+
+</body>
+</html>
