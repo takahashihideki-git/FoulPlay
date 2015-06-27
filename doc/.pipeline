@@ -1,0 +1,1 @@
+{"selectedFilePaths":["/Users/takahashihideki/Dev/FoulPlay/doc/pipeline.md"],"filterPaths":[{"path":"/Users/takahashihideki/Dev/FoulPlay/doc/md2html.js","isSelected":true},{"path":"/Users/takahashihideki/Dev/FoulPlay/doc/template.js","isSelected":true}],"terminator":{"terminator":"saveas","saveasExp":"selectedFilePath.replace( /\\.md$/, \".html\" )"}}
