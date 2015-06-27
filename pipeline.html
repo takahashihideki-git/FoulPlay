@@ -236,7 +236,10 @@ footer {
     <span class="name">{name}</span>
 </script>
 
+<!-- Polyfills for webview of Electron -->
+<script type="text/javascript" src="js/script.js"></script>
 <script type="text/javascript" src="js/dragAnd.js"></script>
+
 <script>
 
 var PATH = require( 'path' );
@@ -591,6 +594,7 @@ var Filters = function ( container, selector ) {
     this.selector = selector;
     this.list = new Array();
     this.sorter = new DragAnd.Sort();
+    this.libraries = new Object();
 
     // set drag and drop for move files
     // selector to filter
@@ -616,6 +620,7 @@ Filters.prototype = {
     selector: null,
     list: null,
     sorter: null,
+    libraries: null,
 
     addSortable: function ( element, model ) {
         this.sorter.addSortable( element, model );
@@ -683,6 +688,30 @@ Filters.prototype = {
     clear: function () {
         this.list = new Array();
         this.container.querySelector( ".list" ).innerHTML = "";
+    },
+
+    loadLibrary: function ( url ) {
+
+        var filters = this;
+
+        if ( this.libraries[ url ] ) {
+            return;
+        }
+
+        this.libraries[ url ] = {
+            isReady: false
+        }
+
+        Script( url, function ( response ) {
+            if ( response.status == "200" ) {
+                Pipeline.log( "Load Library: " + url );
+                filters.libraries[ url ].isReady = true;
+            }
+            else {
+                Pipeline.error( "Failure Load Library:" + url );
+            }
+        } );
+
     }
 
 }
@@ -703,8 +732,6 @@ var Filter = function ( file, container, filters ) {
     this.element.setAttribute( "class", "filter" );
     this.container.appendChild( this.element );
     this.element.innerHTML = this.template.replace( /{name}/, this.file.info.name ) 
-
-    this.isReady = false;
 
     // attach event
     this.element.querySelector( "input[type=checkbox]" ).addEventListener( "click", function () {
@@ -727,16 +754,12 @@ Filter.prototype = {
     filters: null,
     template: document.querySelector( ".template-file" ).innerHTML,
     func: null,
-    isReady: false,
     isSelected: false,
 
     set: function ( code ) {
         try {
             eval( code );
             this.func = filter; // filter is reserved keyword in filter file.
-            if ( this.func instanceof Function ) {
-                this.isReady = true;
-            }
         } catch ( e ) {
             alert( this.file.path + " is invalid filter file" );
             console.log( this.file.path );
@@ -782,10 +805,17 @@ Filter.prototype = {
             success: function ( path, content ) {
                 try {
                     var filter = null;
+                    var dependencies = null;
                     eval( content );
                     if ( ! filter instanceof Function ) {
                         alert( model.file.path + " is invalid filter file" );
                         model.remove();
+                    }
+                    // load dependencies
+                    if ( dependencies && dependencies.length ) {
+                        for ( var i = 0; i < dependencies.length; i++ ) {
+                            model.filters.loadLibrary( dependencies[ i ] );
+                        }
                     }
                 } catch ( e ) {
                     alert( model.file.path + " is invalid filter file" );
