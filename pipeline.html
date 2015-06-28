@@ -1042,6 +1042,17 @@ Worker.prototype = {
 
     canRun: function () {
 
+        var libraries = Object.keys( this.filters.libraries );
+
+        if ( libraries.length ) {
+            for ( var i = 0; i < libraries.length; i++ ) {
+                if ( ! this.filters.libraries[ libraries[ i ] ].isReady ) {
+                    Pipeline.error( "Library is not ready: " + libraries[ i ] );
+                    return false;
+                }
+            }
+        }
+
         var files = this.selector.getSelectedFiles();
         var filters = this.filters.getFilters();
 
