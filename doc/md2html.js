@@ -1,5 +1,7 @@
 var filter = function ( content, context, next ) {
 
+  console.log( context );
+
   // first h1 is the title
   var title = "";
   if ( content.match( /^#\s*(.*)\s*$/m ) ) {

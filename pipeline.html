@@ -1099,7 +1099,8 @@ Worker.prototype = {
         var files = this.selector.getSelectedFiles();
 
         var globalContext = {
-            root: this.selector.root
+            root: this.selector.root,
+            filesLength: files.length
         };
 
         var done = 0;
@@ -1126,6 +1127,7 @@ Worker.prototype = {
 
                         var context = {
                             path: path,
+                            index: fileNumber,
                             info: files[ fileNumber ].info,
                             globalContext: globalContext
                         }
