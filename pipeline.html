@@ -505,10 +505,13 @@ var File = function ( path, info, container, selector ) {
     // set draggable
     this.selector.addDraggable( this.element, this );
 
+    var rootPathPattern = new RegExp( "^" + this.selector.root.path );
+    var relativePath = this.path.replace( rootPathPattern, "" );
+
     // is selected
     if ( Pipeline.selectedFilePaths ) {
         for ( var i = 0; i < Pipeline.selectedFilePaths.length; i++ ) {
-            if ( this.path == Pipeline.selectedFilePaths[ i ] ) {
+            if ( relativePath == Pipeline.selectedFilePaths[ i ] ) {
                 this.select();
                 break;
             }
@@ -518,7 +521,7 @@ var File = function ( path, info, container, selector ) {
     // is filter?
     if ( Pipeline.filterPaths ) {
         for ( var i = 0; i < Pipeline.filterPaths.length; i++ ) {
-            if ( this.path == Pipeline.filterPaths[ i ].path ) {
+            if ( relativePath == Pipeline.filterPaths[ i ].path ) {
                 Pipeline.filterize( this, Pipeline.filterPaths[ i ].isSelected );
                 break;
             }
@@ -1027,11 +1030,11 @@ var Worker = function ( selector, filters, terminator ) {
     this.filters = filters;
     this.terminator = terminator;
 
-        document.querySelector( "body" ).addEventListener( "click", function ( e ) {
-            if ( e.target.tagName == "INPUT" ) {
-                worker.canRun();
-            }
-        } );
+    document.querySelector( "body" ).addEventListener( "click", function ( e ) {
+        if ( e.target.tagName == "INPUT" ) {
+            worker.canRun();
+        }
+    } );
 
 }
 Worker.prototype = {
@@ -1298,8 +1301,11 @@ var Pipeline = {
         Pipeline.selectedFilePaths = new Array();
         var selectedFilePaths = new Array();        
         Pipeline.selector.root.getSelectedFiles( selectedFilePaths );
+
+        var rootPathPattern = new RegExp( "^" + Pipeline.selector.root.path );
+
         for ( var i = 0; i < selectedFilePaths.length; i++ ) {
-            Pipeline.selectedFilePaths.push( selectedFilePaths[ i ].path );
+            Pipeline.selectedFilePaths.push( selectedFilePaths[ i ].path.replace( rootPathPattern, "" ) );
         }
 
     },
@@ -1308,9 +1314,12 @@ var Pipeline = {
     storeFilterPaths: function () {
 
         Pipeline.filterPaths = new Array();
+
+        var rootPathPattern = new RegExp( "^" + Pipeline.selector.root.path );
+
         for ( var i = 0; i < Pipeline.filters.list.length; i++ ) {
             Pipeline.filterPaths.push( { 
-                path: Pipeline.filters.list[ i ].file.path,
+                path: Pipeline.filters.list[ i ].file.path.replace( rootPathPattern, "" ),
                 isSelected: Pipeline.filters.list[ i ].isSelected
             } );
         }
