@@ -76,7 +76,7 @@ filter 関数には、次の引数が渡されます。
 
  * 第二引数: 次の内容の処理コンテキストオブジェクト
 
-<code><pre>{ 
+<code><pre>    { 
         path: ファイルのパス
         info: ファイルの情報 → https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
         currentFileCount:　全処理対象ファイル中の処理順　1 〜
