@@ -103,7 +103,7 @@ filter 関数には、次の引数が渡されます。
         "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"
     ];
 
-#### Node.js の標準モジュールも使用できます。
+#### Node.js の標準モジュールも使用できます
 
 次のようにして、filter 関数の内部で、Node.js の標準モジュールを使用することもできます。
 
