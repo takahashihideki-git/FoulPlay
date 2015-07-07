@@ -24,6 +24,8 @@ Pipeline を前提にしたスクリプトは、作業のコンテクストの�
 
 下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある + ボタンをクリックして、ショートカットに登録します。
 
+http://takahashihideki-git.github.io/FoulPlay/pipeline.html
+
 その後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、ローカルファイルシステムにアクセスできるようになります。
 
 ### root フォルダを選択
@@ -71,7 +73,7 @@ filter 関数には、次の引数が渡されます。
 
     { 
         path: ファイルのパス
-        info: ファイルの情報　https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
+        info: ファイルの情報 → https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
         currentFileCount:　全処理対象ファイル中の処理順　1 〜
         globalContext: {
             path: Pipelneが適用されたフォルダのパス
@@ -83,9 +85,27 @@ filter 関数には、次の引数が渡されます。
 
  * 第三引数: 次のフィルターまたはターミネータに処理を引き継ぐためのコールバック関数
 
-filter 関数は、必ず、第三引数に渡された next 関数に、引数として書き換え後のファイルの内容を与えて実行しなければなりません。
+    filter 関数は、必ず、第三引数に渡された next 関数に、引数として書き換え後のファイルの内容を与えて実行しなければなりません。
 
-# ターミネーターを設定
+### ターミネーターを設定
+
+最後に実行されるスクリプトファイルの出力先を指定します。4つのオプションが用意されています。
+
+ * none
+ 
+   何もせずに終了します。
+
+ * console
+
+   Developer Tools のコンソールに出力します。Developer Tools はメニューから Foul > Developer Tools (Mac) または Menu > Developer Tools (Windows) を選択して開きます。
+
+ * overwrite
+
+   Selector 欄で選択したファイルに上書きします。
+
+ * save as
+
+   指定したパスのファイルに出力します。選択肢の下に用意されたテキストエリアに記述した Javascript コードで出力先のパスを指定します。変数 selectedFilePath の値は、Selector 欄で選択したファイルのパスです。たとえば、selectedFilePath.replace( /\.csv/, ".json"  ) と記述すると、元のファイルの拡張子を json に置き換えた名前のファイルに出力します。
 
 # Run !
 
