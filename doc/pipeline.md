@@ -25,7 +25,7 @@ Pipeline を前提にしたスクリプトは、作業のコンテクストの�
 
 ### Foul にショートカットを登録
 
-下記の URL を [Foul](https://github.com/takahashihideki-git/Foul) のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある + ボタンをクリックして、ショートカットに登録します。
+下記の URL を [Foul](https://github.com/takahashihideki-git/Foul) のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。
 
 http://takahashihideki-git.github.io/FoulPlay/pipeline.html
 
@@ -35,7 +35,7 @@ http://takahashihideki-git.github.io/FoulPlay/pipeline.html
 
 書き換えの対象となるテキストファイルと、書き換えを行うスクリプトファイルが含まれたフォルダを選択します。
 
-Select ボタンをクリックすると、フォルダ選択ダイアログが開きます。
+「Select」ボタンをクリックすると、フォルダ選択ダイアログが開きます。
 
 フォルダを選択すると、下位階層のファイルとフォルダが Selector 欄に読み込まれます。
 
@@ -99,6 +99,8 @@ next 関数の引数に false を与えて実行すると、当該のファイ�
 
 外部の Javascript ライブラリーを使用するには、次のように dependencies 配列を定義します。
 
+    var filter = function () { ... }
+    
     var dependencies = [
         "https://code.jquery.com/jquery-2.1.4.min.js",
         "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"
