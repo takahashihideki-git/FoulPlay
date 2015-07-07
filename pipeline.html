@@ -505,7 +505,7 @@ var File = function ( path, info, container, selector ) {
     // set draggable
     this.selector.addDraggable( this.element, this );
 
-    var rootPathPattern = new RegExp( "^" + this.selector.root.path );
+    var rootPathPattern = new RegExp( "^" + this.selector.root.path.replace( /\\/g, "\\\\" ) );
     var relativePath = this.path.replace( rootPathPattern, "" );
 
     // is selected
@@ -1302,7 +1302,7 @@ var Pipeline = {
         var selectedFilePaths = new Array();        
         Pipeline.selector.root.getSelectedFiles( selectedFilePaths );
 
-        var rootPathPattern = new RegExp( "^" + Pipeline.selector.root.path );
+        var rootPathPattern = new RegExp( "^" + Pipeline.selector.root.path.replace( /\\/g, "\\\\" ) );
 
         for ( var i = 0; i < selectedFilePaths.length; i++ ) {
             Pipeline.selectedFilePaths.push( selectedFilePaths[ i ].path.replace( rootPathPattern, "" ) );
@@ -1315,7 +1315,7 @@ var Pipeline = {
 
         Pipeline.filterPaths = new Array();
 
-        var rootPathPattern = new RegExp( "^" + Pipeline.selector.root.path );
+        var rootPathPattern = new RegExp( "^" + Pipeline.selector.root.path.replace( /\\/g, "\\\\" ) );
 
         for ( var i = 0; i < Pipeline.filters.list.length; i++ ) {
             Pipeline.filterPaths.push( { 
