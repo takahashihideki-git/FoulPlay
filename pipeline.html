@@ -511,7 +511,7 @@ var File = function ( path, info, container, selector ) {
     // is selected
     if ( Pipeline.selectedFilePaths ) {
         for ( var i = 0; i < Pipeline.selectedFilePaths.length; i++ ) {
-            if ( relativePath == Pipeline.selectedFilePaths[ i ] ) {
+            if ( relativePath == Pipeline.transrateRelativePathForOS( Pipeline.selectedFilePaths[ i ] ) ) {
                 this.select();
                 break;
             }
@@ -521,7 +521,7 @@ var File = function ( path, info, container, selector ) {
     // is filter?
     if ( Pipeline.filterPaths ) {
         for ( var i = 0; i < Pipeline.filterPaths.length; i++ ) {
-            if ( relativePath == Pipeline.filterPaths[ i ].path ) {
+            if ( relativePath == Pipeline.transrateRelativePathForOS( Pipeline.filterPaths[ i ].path ) ) {
                 Pipeline.filterize( this, Pipeline.filterPaths[ i ].isSelected );
                 break;
             }
@@ -1386,6 +1386,10 @@ var Pipeline = {
 
         Pipeline.isReady = false;
 
+    },
+
+    transrateRelativePathForOS: function ( path ) {
+        return path.replace( /[\\\/]/g, PATH.sep );
     }
 
 }
