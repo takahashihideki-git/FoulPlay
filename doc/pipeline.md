@@ -1,8 +1,11 @@
 # Pipeline
 
+
 Pipeline は、複数のテキストファイルの内容を、専用のスクリプトによって一挙に書き換えるような、一括変換作業に奉仕する "GUIコンソール" アプリです。
 
 Pipeline は、ローカルファイルシステムの特定のフォルダを対象にして動作します。一括変換作業の実行者は、Pipeline で任意のフォルダを開き、次の3つの操作パネルの設定を通じて、変換作業のシナリオを決定します。
+
+<img src="img/pipeline2.png" style="display:block;width:60%;margin:2em auto">
 
 「Selector」で、一括変換の対象となるテキストファイルを選択します。
 
