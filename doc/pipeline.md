@@ -25,7 +25,7 @@ Pipeline を前提にしたスクリプトは、作業のコンテクストの�
 
 ### Foul にショートカットを登録
 
-下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある + ボタンをクリックして、ショートカットに登録します。
+下記の URL を [Foul](https://github.com/takahashihideki-git/Foul) のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある + ボタンをクリックして、ショートカットに登録します。
 
 http://takahashihideki-git.github.io/FoulPlay/pipeline.html
 
