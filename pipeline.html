@@ -350,7 +350,7 @@ var Folder = function ( path, info, container, selector ) {
                         new Folder(
                             PATH.resolve( folder.path + "/" + files[ i ].name ),
                             files[ i ],
-                            folder.element.querySelector( ".children > .folders" ),
+                            folder.element.querySelector( ".children" ).children[ 0 ], // .folders
                             folder.selector
                         )
                     );
@@ -360,7 +360,7 @@ var Folder = function ( path, info, container, selector ) {
                         new File(
                             PATH.resolve( folder.path + "/" + files[ i ].name ),
                             files[ i ],
-                            folder.element.querySelector( ".children > .files" ),
+                            folder.element.querySelector( ".children" ).children[ 1 ], // .files
                             folder.selector
                         ) 
                     ); 
