@@ -5,26 +5,26 @@
     <description><![CDATA[SPAs on Foul]]></description>
     <link>http://takahashihideki-git.github.io/FoulPlay/doc/index.html</link>
     <generator>RSS for Node</generator>
-    <lastBuildDate>Wed, 15 Jul 2015 13:02:56 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 15 Jul 2015 23:41:57 GMT</lastBuildDate>
     <atom:link href="http://takahashihideki-git.github.io/FoulPlay/doc/rss.xml" rel="self" type="application/rss+xml"/>
     <author><![CDATA[takahashihideki]]></author>
     <copyright><![CDATA[takahashihideki]]></copyright>
     <item>
       <title><![CDATA[Pipeline]]></title>
       <description><![CDATA[複数のテキストファイルの内容を、一定の規則にしたがって、一括して一挙に書き換える類の仕事を、なるべく手っ取り早く、しかもなるべく簡単な Javascript だけでやっつけるための、ザ、"GUIコンソ]]></description>
-      <link>http://takahashihideki-git.github.io/FoulPlay/doc/C:\Users\takahashihideki\Documents\GitHub\foul\FoulPlay\doc\test.html</link>
-      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/C:\Users\takahashihideki\Documents\GitHub\foul\FoulPlay\doc\test.html</guid>
+      <link>http://takahashihideki-git.github.io/FoulPlay/doc//Users/takahashihideki/Dev/FoulPlay/doc/test.html</link>
+      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc//Users/takahashihideki/Dev/FoulPlay/doc/test.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Wed, 01 Jul 2015 12:33:48 GMT</pubDate>
+      <pubDate>Tue, 30 Jun 2015 02:58:15 GMT</pubDate>
       <image></image>
     </item>
     <item>
       <title><![CDATA[Pipeline]]></title>
       <description><![CDATA[Pipeline は、複数のテキストファイルの内容を、専用のスクリプトによって一挙に書き換えるような、一括変換作業に奉仕する "GUIコンソール" アプリです。Pipeline は、ローカルファイルシ]]></description>
-      <link>http://takahashihideki-git.github.io/FoulPlay/doc/C:\Users\takahashihideki\Documents\GitHub\foul\FoulPlay\doc\pipeline.html</link>
-      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/C:\Users\takahashihideki\Documents\GitHub\foul\FoulPlay\doc\pipeline.html</guid>
+      <link>http://takahashihideki-git.github.io/FoulPlay/doc//Users/takahashihideki/Dev/FoulPlay/doc/pipeline.html</link>
+      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc//Users/takahashihideki/Dev/FoulPlay/doc/pipeline.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Wed, 01 Jul 2015 12:33:48 GMT</pubDate>
+      <pubDate>Wed, 15 Jul 2015 23:34:32 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/pipeline2.png</image>
     </item>
   </channel>
