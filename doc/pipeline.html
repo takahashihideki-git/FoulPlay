@@ -39,6 +39,10 @@
 		color: #fff;
 		background-color: #333;
 	}
+	footer a,
+	footer a:hover {
+		color: #fff;
+	}
 </style>
 </head>
 <body>
@@ -52,18 +56,18 @@
 <p>「Filters」で、変換を行うスクリプトファイルを指定し、複数のスクリプトファイルを指定した場合は、実行順序を設定します。</p>
 <p>「Terminator」 で、変換結果の出力方法を設定します。</p>
 <p>Pipeline は、このように、一括変換作業のシナリオを条件や目的に応じて実行者が自由に設定できるようにすることで、テキストの変換を行うスクリプトの責任を軽減します。</p>
-<p>Pipeline を前提にしたスクリプトは、作業のコンテクストのことは度外視して、UNIX のコマンドのような&quot;単一責任の原則&quot;の下で、まさに目の前に与えられたテキストの書き換えのみに専念すればよいことになります。
+<p>Pipeline を前提にしたスクリプトは、作業のコンテキストのことは度外視して、UNIX のコマンドのような&quot;単一責任の原則&quot;の下で、まさに目の前に与えられたテキストの書き換えのみに専念すればよいことになります。
 つまり、開発のしやすさ、拡張のしやすさ、保守のしやすさ、再利用のしやすさが高まります。</p>
 <p>ひとつひとつはいたって単純なスクリプトの組み合わせを工夫することで、総体としてみれば相当に複雑な一括変換作業をこなすこともできるようになるでしょう。
 こうして、Pipeline は結局、この種の一括変換作業環境の構築そのものを、たとえ一度きりで使い捨てても少しも惜しくないほど気軽でカジュアルなものにします。</p>
 <h2 id="-">使い方</h2>
 <h3 id="foul-">Foul にショートカットを登録</h3>
-<p>下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある + ボタンをクリックして、ショートカットに登録します。</p>
+<p>下記の URL を <a href="https://github.com/takahashihideki-git/Foul">Foul</a> のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。</p>
 <p><a href="http://takahashihideki-git.github.io/FoulPlay/pipeline.html">http://takahashihideki-git.github.io/FoulPlay/pipeline.html</a></p>
 <p>その後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、ローカルファイルシステムにアクセスできるようになります。</p>
-<h3 id="root-">root フォルダを選択</h3>
+<h3 id="-">フォルダを選択</h3>
 <p>書き換えの対象となるテキストファイルと、書き換えを行うスクリプトファイルが含まれたフォルダを選択します。</p>
-<p>Select ボタンをクリックすると、フォルダ選択ダイアログが開きます。</p>
+<p>「Select」ボタンをクリックすると、フォルダ選択ダイアログが開きます。</p>
 <p>フォルダを選択すると、下位階層のファイルとフォルダが Selector 欄に読み込まれます。</p>
 <h3 id="-">書き換え対象となるテキストファイルを選択</h3>
 <p>Selector 欄から、書き換え対象となるテキストファイルを選択します。ファイル名の前にあるチェックボックスをチェックします。</p>
@@ -92,22 +96,23 @@
 <pre><code> { 
      path: ファイルのパス
      info: ファイルの情報 → https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
-     currentFileCount:　全処理対象ファイル中の処理順　1 〜
+     index:　全処理対象ファイル中の処理順　0 〜
      globalContext: {
-         path: Pipelneが適用されたフォルダのパス
-         totalFileCount: 全処理対象ファイル数 
+         root: Pipelneが適用されたフォルダのパス
+         filesLength: 全処理対象ファイル数 
      }
  }
-</code></pre><p> globalContext は、全ファイルの処理に共通のオブジェクトです。ここに適当な key value をセットして、後続のファイルの処理に任意の値を引き渡すことができます。</p>
-</li>
-<li><p>第三引数: 次のフィルターまたはターミネータに処理を引き継ぐためのコールバック関数</p>
-<p> filter 関数は、必ず、第三引数に渡された next 関数に、引数として書き換え後のファイルの内容を与えて実行しなければなりません。</p>
-<p> next関数の引数に false を与えて実行すると、当該のファイルに対する処理は、その時点で中断します。</p>
+</code></pre></li>
+<li><p>第三引数: 後続のフィルターまたはターミネーターに、変換後のファイルの内容を引き渡すための関数</p>
 </li>
 </ul>
+<p>filter 関数は、必ず、第三引数に渡された next 関数に、引数として書き換え後のファイルの内容を与えて実行しなければなりません。</p>
+<p>next 関数の引数に false を与えて実行すると、当該のファイルに対する処理は、その時点で中断します。</p>
 <h4 id="filter-">filter 関数で外部のライブラリーを使用したいとき</h4>
 <p>外部の Javascript ライブラリーを使用するには、次のように dependencies 配列を定義します。</p>
-<pre><code>var dependencies = [
+<pre><code>var filter = function () { ... }
+
+var dependencies = [
     &quot;https://code.jquery.com/jquery-2.1.4.min.js&quot;,
     &quot;https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js&quot;
 ];
@@ -145,7 +150,7 @@ Pipeline.error( message ) // Pipeline の画面上にエラーとして出力し
 <p>変換作業が終了すると、Selector 欄の表示が更新されます。</p>
 <h3 id="-">リフレッシュ</h3>
 <p>「Refresh」ボタンをクリックすると、Selector 欄の内容を更新します。</p>
-<p>ちなみに、Selector 欄で選択されたファイル、Filters 欄で指定されたスクリプトファイルの内容は、変換作業実行時に読み込まれるので、Pipeline を表示した後で、それらのファイルの内容を書き換えたとしても、Pipeline をロードし直したり、「Refresh」ボタンをクリックする必要はありません。</p>
+<p>ちなみに、Selector 欄で選択されたファイル、Filters 欄で指定されたスクリプトファイルの内容は、変換作業実行時に読み込まれるので、フォルダを選択した後で、それらのファイルの内容を書き換えたとしても、Pipeline をロードし直したり、「Refresh」ボタンをクリックする必要はありません。</p>
 <h3 id="-">設定の保存</h3>
 <p>「Save Settings」をクリックすると、Selector 欄、Filters 欄、Terminator 欄の状態を、選択されているフォルダの .pipeline ファイルに保存します。</p>
 <p>Pipeline は、フォルダが選択されたとき、.pipeline ファイルが存在していれば、その内容に応じて Selector 欄、Filters 欄、Terminator 欄を初期化します。</p>

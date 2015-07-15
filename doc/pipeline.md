@@ -79,12 +79,14 @@ filter 関数には、次の引数が渡されます。
         { 
             path: ファイルのパス
             info: ファイルの情報 → https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
-            currentFileCount:　全処理対象ファイル中の処理順　1 〜
+            index:　全処理対象ファイル中の処理順　0 〜
             globalContext: {
-                path: Pipelneが適用されたフォルダのパス
-                totalFileCount: 全処理対象ファイル数 
+                root: Pipelneが適用されたフォルダのパス
+                filesLength: 全処理対象ファイル数 
             }
         }
+
+ * 第三引数: 後続のフィルターまたはターミネーターに、変換後のファイルの内容を引き渡すための関数
 
 filter 関数は、必ず、第三引数に渡された next 関数に、引数として書き換え後のファイルの内容を与えて実行しなければなりません。
 

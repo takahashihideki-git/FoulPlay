@@ -1,1 +1,1 @@
-{"selectedFilePaths":["\\pipeline.md","\\test.md"],"filterPaths":[{"path":"\\md2html.js","isSelected":true},{"path":"\\template.js","isSelected":true}],"terminator":{"terminator":"saveas","saveasExp":"selectedFilePath.replace( /\\.md$/, \".html\" )"}}
+{"selectedFilePaths":["\\pipeline.md","\\test.md"],"filterPaths":[{"path":"\\md2html.js","isSelected":true},{"path":"\\template.js","isSelected":true},{"path":"\\makeFeed.js","isSelected":true}],"terminator":{"terminator":"saveas","saveasExp":"selectedFilePath.replace( /\\.md$/, \".html\" )"}}

@@ -522,7 +522,7 @@ var File = function ( path, info, container, selector ) {
     if ( Pipeline.filterPaths ) {
         for ( var i = 0; i < Pipeline.filterPaths.length; i++ ) {
             if ( relativePath == Pipeline.transrateRelativePathForOS( Pipeline.filterPaths[ i ].path ) ) {
-                Pipeline.filterize( this, Pipeline.filterPaths[ i ].isSelected );
+                Pipeline.filterize( this, Pipeline.filterPaths[ i ].isSelected, i );
                 break;
             }
         }
@@ -596,7 +596,6 @@ var Filters = function ( container, selector ) {
     this.container = container;
     this.selector = selector;
     this.list = new Array();
-    this.sorter = new DragAnd.Sort();
     this.libraries = new Object();
 
     // set drag and drop for move files
@@ -612,9 +611,7 @@ var Filters = function ( container, selector ) {
     } );
 
     // set drag and drop for sort filters
-    this.sorter.setContainer( this.container.querySelector( ".list" ), function ( sorter ) {
-        filters.sort( sorter );
-    } );
+    this.setSorter();
 
 }
 Filters.prototype = {
@@ -625,11 +622,23 @@ Filters.prototype = {
     sorter: null,
     libraries: null,
 
+    setSorter: function () {
+
+        var filters = this;
+
+        this.sorter = new DragAnd.Sort();
+
+        this.sorter.setContainer( this.container.querySelector( ".list" ), function ( sorter ) {
+            filters.sort( sorter );
+        } );
+
+    },
+
     addSortable: function ( element, model ) {
         this.sorter.addSortable( element, model );
     },
 
-    makeFilter: function ( file, isSelected ) {
+    makeFilter: function ( file, isSelected, index ) {
 
         file.inactive();
 
@@ -639,7 +648,12 @@ Filters.prototype = {
             this
         );
 
-        this.list.push( filter );
+        if ( index !== undefined ) {
+            this.list[ index ] = filter;
+        }
+        else {
+            this.list.push( filter );
+        }
 
         if ( file.isSelected ) {
             file.unselect();
@@ -648,6 +662,8 @@ Filters.prototype = {
         if ( isSelected ) {
             filter.select();
         }
+
+        this.align();
 
         setTimeout( function () { Pipeline.canRun() }, 0 );
 
@@ -678,6 +694,16 @@ Filters.prototype = {
 
     },
 
+    align: function () {
+
+        for( var i = 0; i < this.list.length; i++ ) {
+            if ( this.list[ i ] && this.list[ i ].element ) {
+                this.container.querySelector( ".list" ).insertBefore( this.list[ i ].element, null );
+            }
+        }
+
+    },
+
     getFilters: function () {
         var selectedFilters = new Array();
         for ( var i = 0; i < this.list.length; i++ ) {
@@ -691,6 +717,7 @@ Filters.prototype = {
     clear: function () {
         this.list = new Array();
         this.container.querySelector( ".list" ).innerHTML = "";
+        this.setSorter();
     },
 
     loadLibrary: function ( url ) {
@@ -743,6 +770,7 @@ var Filter = function ( file, container, filters ) {
 
     // set draggable
     this.filters.selector.addDraggable( this.element, this );
+
     // set sortable
     this.filters.addSortable( this.element, this );
 
@@ -1326,8 +1354,8 @@ var Pipeline = {
 
     },
 
-    filterize: function ( file, isSelected ) {
-        Pipeline.filters.makeFilter( file, isSelected );
+    filterize: function ( file, isSelected, index ) {
+        Pipeline.filters.makeFilter( file, isSelected, index );
     },
 
     canRun: function () {
