@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>RSS1.0 Editor</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<style>
+.canvas {
+    padding: 0 1em;
+}
+.feed,
+.item {
+    margin-bottom: 1em;
+    border-radius: 5px;
+    cursor: move;
+}
+.feed {
+    position: relative;
+    margin-bottom: 2em;
+}
+.item {
+    background-color: #eee;
+    border: 1px solid #999;
+}
+.feed ul {
+    position: absolute;
+    top: 10px;
+    right: 0;
+}
+.feed li {
+    display: inline;
+    list-style-type: none;
+}
+.feed li:after {
+    content: "|";
+    padding: 0 0.5em;
+}
+.feed li:last-child:after {
+    content: ""
+}
+.feed h3,
+.item h3 {
+    margin: 0;
+    padding: 0.3em 0.5em;
+    font-size: 100%;
+    font-weight: bold;
+    border-bottom:1px solid #999;
+}
+.feed h3 {
+    padding: 0.3em;
+    font-size: 140%;
+}
+.feed table,
+.item table {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 5px;
+}
+.feed input,
+.feed textarea,
+.item input,
+.item textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 99%;
+    padding-left: 1em;
+    border: 0;
+}
+.feed tr,
+.item tr {
+    border-bottom: 1px dotted #ccc;
+}
+.feed tr:last-child {
+    border-bottom: 1px solid #999;
+}
+.item tr:last-child {
+    border-bottom: 0;
+}
+.feed th,
+.item th {
+    width: 8em;
+    padding-left: 0.5em;
+    font-weight: normal;
+    border-right: 1px dotted #ccc;
+}
+</style>
+</head>
+<body>
+
+<div class="canvas">
+
+    <h1>RSS1.0 Editor</h1>
+
+    <div class="feed">        
+        <h3>Feed</h3>
+        <ul>
+            <li>Open</li>
+            <li>Save</li>
+            <li>Save As ...</li>
+        </ul>
+        <table>
+            <tr>
+                <th>file</th>
+                <td><input type="text" name="file"></td>
+            </tr>
+            <tr>
+                <th>title</th>
+                <td><input type="text" name="title"></td>
+            </tr>
+            <tr>
+                <th>description</th>
+                <td><textarea name="description"></textarea></td>
+            </tr>
+            <tr>
+                <th>feed url</th>
+                <td><input type="text" name="feed_url"></td>
+            </tr>
+            <tr>
+                <th>site url</th>
+                <td><input type="text" name="site_url"></td>
+            </tr>
+            <tr>
+                <th>author</th>
+                <td><input type="text" name="author"></td>
+            </tr>
+            <tr>
+                <th>copyright</th>
+                <td><input type="text" name="copyright"></td>
+            </tr>
+        </table>
+    </div>
+
+    <form>
+        <div class="items">
+            <div class="item">
+                <h3>Item</h3>
+                <table>
+                    <tr>
+                        <th>title</th>
+                        <td><input type="text" name="title"></td>
+                    </tr>
+                    <tr>
+                        <th>description</th>
+                        <td><textarea name="description"></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>url</th>
+                        <td><input type="text" name="url"></td>
+                    </tr>
+                    <tr>
+                        <th>date</th>
+                        <td><input type="text" name="date"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="item">
+                <h3>Item</h3>
+                <table>
+                    <tr>
+                        <th>title</th>
+                        <td><input type="text" name="title"></td>
+                    </tr>
+                    <tr>
+                        <th>description</th>
+                        <td><textarea name="description"></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>url</th>
+                        <td><input type="text" name="url"></td>
+                    </tr>
+                    <tr>
+                        <th>date</th>
+                        <td><input type="text" name="date"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="item">
+                <h3>Item</h3>
+                <table>
+                    <tr>
+                        <th>title</th>
+                        <td><input type="text" name="title"></td>
+                    </tr>
+                    <tr>
+                        <th>description</th>
+                        <td><textarea name="description"></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>url</th>
+                        <td><input type="text" name="url"></td>
+                    </tr>
+                    <tr>
+                        <th>date</th>
+                        <td><input type="text" name="date"></td>
+                    </tr>
+                </table>
+            </div>
+
+        <!-- /items -->
+        </div>
+    </form>
+
+</div>
+
+
+
+<script src="js/RSS.js"></script>
+<script src="js/dragAnd.js"></script>
+
+<script>
+
+/* lets create an rss feed */
+var feed = new RSS( {
+    title: 'title',
+    description: 'description',
+    feed_url: 'http://example.com/rss.xml',
+    site_url: 'http://example.com',
+    author: 'Dylan Greene',
+    copyright: '2013 Dylan Greene',
+} );
+
+/* loop over data and add to feed */
+feed.item( {
+    title: 'item title',
+    description: 'use this for the content. It can include html.',
+    url: 'http://example.com/article4?this&that', // link to the item
+    date: 'May 27, 2012', // any format that js Date can parse.
+} );
+
+feed.item( {
+    title: 'item title2',
+    description: 'use this for the content. It can include html.',
+    url: 'http://example.com/article4?this&that', // link to the item
+    date: 'May 27, 2012', // any format that js Date can parse.
+} );
+
+// cache the xml to send to clients
+var xml = feed.xml( "  " );
+console.log( xml );
+
+// parse xml
+var parser = new DOMParser();
+var xmlDom = parser.parseFromString( xml, "text/xml" );
+
+// test
+var items = xmlDom.querySelectorAll( "item" );
+for ( var i = 0; i < items.length; i++ ) {
+	console.log( items[ i ].querySelector( "title" ).textContent );
+	console.log( items[ i ].querySelector( "description" ).textContent );
+	console.log( items[ i ].querySelector( "link" ).textContent );
+	console.log( items[ i ].querySelector( "creator" ).textContent );
+	console.log( items[ i ].querySelector( "pubDate" ).textContent );
+}
+
+window.onload = function () {
+
+    var itemSorter = new DragAnd.Sort();
+    itemSorter.setContainer( document.querySelector( ".items" ) );
+    var items = document.querySelectorAll( ".item" );
+    for ( var i = 0; i < items.length; i++ ) {
+        itemSorter.addSortable( items[ i ] );
+    }    
+
+}
+
+</script>
+</body>
+</html>

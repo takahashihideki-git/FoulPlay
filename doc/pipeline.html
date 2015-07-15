@@ -3,9 +3,48 @@
 <head>
 <mata charset="utf-8">
 <title>Pipeline</title>
+<link rel="stylesheet" href="../css/bootstrap.min.css"> 
+<style type="text/css">
+	body {
+		font-size: 14px;
+	}
+	header {
+		box-sizing: boder-box;
+		padding-top: 53px;
+		height: 150px;
+		font-size: 100%;
+		color: #fff;
+		background-color: #333;
+		background-image: url("img/icon_512x512.png");
+		background-repeat: no-repeat;
+		background-size: 100px 100px;
+		background-position: 1em 25px;		
+	}
+	header h1 {
+		margin: 0;
+		margin-left: 140px;
+		font-size: 40px;
+	}
+	.container {
+		margin: 1em;
+		padding-bottom: 2em;
+	}
+	h1, h2, h3, h4 {
+		margin-top: 2em;
+		margin-bottom: 2em;
+	}
+	footer {
+		padding: 2em;
+		text-align: center;
+		color: #fff;
+		background-color: #333;
+	}
+</style>
 </head>
 <body>
-<h1 id="pipeline">Pipeline</h1>
+	<header><h1>Foul Play</h1></header>
+	<div class="container">
+		<h1 id="pipeline">Pipeline</h1>
 <p>Pipeline は、複数のテキストファイルの内容を、専用のスクリプトによって一挙に書き換えるような、一括変換作業に奉仕する &quot;GUIコンソール&quot; アプリです。</p>
 <p>Pipeline は、ローカルファイルシステムの特定のフォルダを対象にして動作します。一括変換作業の実行者は、Pipeline で任意のフォルダを開き、次の3つの操作パネルの設定を通じて、変換作業のシナリオを決定します。</p>
 <p><img src="img/pipeline2.png" style="display:block;width:60%;margin:2em auto"></p>
@@ -50,16 +89,16 @@
 <li><p>第一引数: Selector 欄で選択されたファイルの内容</p>
 </li>
 <li><p>第二引数: 次の内容の処理コンテキストオブジェクト</p>
-<p> { </p>
-<pre><code> path: ファイルのパス
- info: ファイルの情報 → https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
- currentFileCount:　全処理対象ファイル中の処理順　1 〜
- globalContext: {
-     path: Pipelneが適用されたフォルダのパス
-     totalFileCount: 全処理対象ファイル数 
+<pre><code> { 
+     path: ファイルのパス
+     info: ファイルの情報 → https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
+     currentFileCount:　全処理対象ファイル中の処理順　1 〜
+     globalContext: {
+         path: Pipelneが適用されたフォルダのパス
+         totalFileCount: 全処理対象ファイル数 
+     }
  }
-</code></pre><p> }</p>
-<p> globalContext は、全ファイルの処理に共通のオブジェクトです。ここに適当な key value をセットして、後続のファイルの処理に任意の値を引き渡すことができます。</p>
+</code></pre><p> globalContext は、全ファイルの処理に共通のオブジェクトです。ここに適当な key value をセットして、後続のファイルの処理に任意の値を引き渡すことができます。</p>
 </li>
 <li><p>第三引数: 次のフィルターまたはターミネータに処理を引き継ぐためのコールバック関数</p>
 <p> filter 関数は、必ず、第三引数に渡された next 関数に、引数として書き換え後のファイルの内容を与えて実行しなければなりません。</p>
@@ -72,7 +111,7 @@
     &quot;https://code.jquery.com/jquery-2.1.4.min.js&quot;,
     &quot;https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js&quot;
 ];
-</code></pre><h4 id="node-js-">Node.js の標準モジュールも使用できます。</h4>
+</code></pre><h4 id="node-js-">Node.js の標準モジュールも使用できます</h4>
 <p>次のようにして、filter 関数の内部で、Node.js の標準モジュールを使用することもできます。</p>
 <pre><code>var path = require( &#39;path&#39; );
 var separator = path.sep;
@@ -112,5 +151,7 @@ Pipeline.error( message ) // Pipeline の画面上にエラーとして出力し
 <p>Pipeline は、フォルダが選択されたとき、.pipeline ファイルが存在していれば、その内容に応じて Selector 欄、Filters 欄、Terminator 欄を初期化します。</p>
 <p>フォルダをコピーまたは移動しても、.pipeline ファイルが含まれていれば、コピー先、移動先で保存された状態を再現することができます。</p>
 
+	</div>
+	<footer>&copy; <a href="https://github.com/takahashihideki-git">takahashihideki</a></footer>
 </body>
 </html>
