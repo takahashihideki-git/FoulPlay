@@ -20,7 +20,6 @@ var mime = require('mime-types');
 var xml = require('xml');
 var fs = require('fs');
 
-
 function ifTruePush(bool, array, data) {
     if (bool) {
         array.push(data);

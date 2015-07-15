@@ -3,22 +3,160 @@
 <head>
 <mata charset="utf-8">
 <title>Pipeline</title>
+<link rel="stylesheet" href="../css/bootstrap.min.css"> 
+<style type="text/css">
+	body {
+		font-size: 14px;
+	}
+	header {
+		box-sizing: boder-box;
+		padding-top: 53px;
+		height: 150px;
+		font-size: 100%;
+		color: #fff;
+		background-color: #333;
+		background-image: url("img/icon_512x512.png");
+		background-repeat: no-repeat;
+		background-size: 100px 100px;
+		background-position: 1em 25px;		
+	}
+	header h1 {
+		margin: 0;
+		margin-left: 140px;
+		font-size: 40px;
+	}
+	.container {
+		margin: 1em;
+		padding-bottom: 2em;
+	}
+	h1, h2, h3, h4 {
+		margin-top: 2em;
+		margin-bottom: 2em;
+	}
+	footer {
+		padding: 2em;
+		text-align: center;
+		color: #fff;
+		background-color: #333;
+	}
+	footer a,
+	footer a:hover {
+		color: #fff;
+	}
+</style>
 </head>
 <body>
-<h1 id="pipeline">Pipeline</h1>
-<p>複数のテキストファイルの内容を、一定の規則にしたがって、一括して一挙に書き換える類の仕事を、なるべく手っ取り早く、しかもなるべく簡単な Javascript だけでやっつけるための、ザ、&quot;GUIコンソール&quot;。</p>
-<p>フォルダを選択</p>
-<p>フィルターを指定</p>
-<p>ターミネーターを設定</p>
-<p>ファイルを選択</p>
-<p>Pipeline = セレクター、フィルターズ、ターミネーター</p>
-<p>Run !</p>
-<p>フィルターがfalseを返せば</p>
-<p>もっと凝ったターミネーターが必要なら</p>
-<p>foul = 事実上の node.js だから、なんでもできる。</p>
-<p>リフレッシュ</p>
-<p>設定の保存</p>
-<p>Pipeline.log, Pipeline.error</p>
+	<header><h1>Foul Play</h1></header>
+	<div class="container">
+		<h1 id="pipeline">Pipeline</h1>
+<p>Pipeline は、複数のテキストファイルの内容を、専用のスクリプトによって一挙に書き換えるような、一括変換作業に奉仕する &quot;GUIコンソール&quot; アプリです。</p>
+<p>Pipeline は、ローカルファイルシステムの特定のフォルダを対象にして動作します。一括変換作業の実行者は、Pipeline で任意のフォルダを開き、次の3つの操作パネルの設定を通じて、変換作業のシナリオを決定します。</p>
+<p><img src="img/pipeline2.png" style="display:block;width:60%;margin:2em auto"></p>
+<p>「Selector」で、一括変換の対象となるテキストファイルを選択します。</p>
+<p>「Filters」で、変換を行うスクリプトファイルを指定し、複数のスクリプトファイルを指定した場合は、実行順序を設定します。</p>
+<p>「Terminator」 で、変換結果の出力方法を設定します。</p>
+<p>Pipeline は、このように、一括変換作業のシナリオを条件や目的に応じて実行者が自由に設定できるようにすることで、テキストの変換を行うスクリプトの責任を軽減します。</p>
+<p>Pipeline を前提にしたスクリプトは、作業のコンテキストのことは度外視して、UNIX のコマンドのような&quot;単一責任の原則&quot;の下で、まさに目の前に与えられたテキストの書き換えのみに専念すればよいことになります。
+つまり、開発のしやすさ、拡張のしやすさ、保守のしやすさ、再利用のしやすさが高まります。</p>
+<p>ひとつひとつはいたって単純なスクリプトの組み合わせを工夫することで、総体としてみれば相当に複雑な一括変換作業をこなすこともできるようになるでしょう。
+こうして、Pipeline は結局、この種の一括変換作業環境の構築そのものを、たとえ一度きりで使い捨てても少しも惜しくないほど気軽でカジュアルなものにします。</p>
+<h2 id="-">使い方</h2>
+<h3 id="foul-">Foul にショートカットを登録</h3>
+<p>下記の URL を <a href="https://github.com/takahashihideki-git/Foul">Foul</a> のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。</p>
+<p><a href="http://takahashihideki-git.github.io/FoulPlay/pipeline.html">http://takahashihideki-git.github.io/FoulPlay/pipeline.html</a></p>
+<p>その後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、ローカルファイルシステムにアクセスできるようになります。</p>
+<h3 id="-">フォルダを選択</h3>
+<p>書き換えの対象となるテキストファイルと、書き換えを行うスクリプトファイルが含まれたフォルダを選択します。</p>
+<p>「Select」ボタンをクリックすると、フォルダ選択ダイアログが開きます。</p>
+<p>フォルダを選択すると、下位階層のファイルとフォルダが Selector 欄に読み込まれます。</p>
+<h3 id="-">書き換え対象となるテキストファイルを選択</h3>
+<p>Selector 欄から、書き換え対象となるテキストファイルを選択します。ファイル名の前にあるチェックボックスをチェックします。</p>
+<p>フォルダ名の前にあるチェックボックスをチェックすると、そのフォルダ以下に存在するすべてのファイルが選択されます。</p>
+<h3 id="-">スクリプトファイルを指定</h3>
+<p>Selector 欄から、スクリプトファイルを選んで、Filters 欄にドラッグアンドドロップで移動します。</p>
+<p>複数のスクリプトファイルを Filters 欄に移動して、順番に実行することができます。</p>
+<p>Filters 欄でスクリプトファイルをドラッグして、実行の順序を変更することができます。</p>
+<p>ファイル名の前にあるチェックボックスのチェックを外したスクリプトファイルは実行されません。</p>
+<p>Filters 欄から Selector 欄にファイルをドラッグしてスクリプトファイルの指定を取り消すこともできます。</p>
+<h4 id="-">スクリプトファイルの書き方</h4>
+<p>filter 関数を定義します。</p>
+<pre><code>var filter = function ( content, context, next ) {
 
+    // content の書き換え
+    content = content.replace( /foo/g, &quot;bar&quot;  );
+    // 書き換えた content を後続の処理に引き渡す
+    next( content );
+
+}
+</code></pre><p>filter 関数には、次の引数が渡されます。</p>
+<ul>
+<li><p>第一引数: Selector 欄で選択されたファイルの内容</p>
+</li>
+<li><p>第二引数: 次の内容の処理コンテキストオブジェクト</p>
+<pre><code> { 
+     path: ファイルのパス
+     info: ファイルの情報 → https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
+     index:　全処理対象ファイル中の処理順　0 〜
+     globalContext: {
+         root: Pipelneが適用されたフォルダのパス
+         filesLength: 全処理対象ファイル数 
+     }
+ }
+</code></pre></li>
+<li><p>第三引数: 後続のフィルターまたはターミネーターに、変換後のファイルの内容を引き渡すための関数</p>
+</li>
+</ul>
+<p>filter 関数は、必ず、第三引数に渡された next 関数に、引数として書き換え後のファイルの内容を与えて実行しなければなりません。</p>
+<p>next 関数の引数に false を与えて実行すると、当該のファイルに対する処理は、その時点で中断します。</p>
+<h4 id="filter-">filter 関数で外部のライブラリーを使用したいとき</h4>
+<p>外部の Javascript ライブラリーを使用するには、次のように dependencies 配列を定義します。</p>
+<pre><code>var filter = function () { ... }
+
+var dependencies = [
+    &quot;https://code.jquery.com/jquery-2.1.4.min.js&quot;,
+    &quot;https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js&quot;
+];
+</code></pre><h4 id="node-js-">Node.js の標準モジュールも使用できます</h4>
+<p>次のようにして、filter 関数の内部で、Node.js の標準モジュールを使用することもできます。</p>
+<pre><code>var path = require( &#39;path&#39; );
+var separator = path.sep;
+</code></pre><h4 id="-">ロギング</h4>
+<p>次のようにして、filter 関数の内部から各種のログ出力を行うことができます。</p>
+<pre><code>console.log( message )    // Developer Tools のコンソールに出力します。
+Pipeline.log( message )   // Pipeline の画面上に実行ログとして出力します。
+Pipeline.error( message ) // Pipeline の画面上にエラーとして出力します。
+</code></pre><h3 id="-">ターミネーターを設定</h3>
+<p>最後に実行されるスクリプトファイルの出力先を指定します。4つのオプションが用意されています。</p>
+<ul>
+<li><p>none</p>
+<p>何もせずに終了します。</p>
+</li>
+<li><p>console</p>
+<p>Developer Tools のコンソールに出力します。Developer Tools はメニューから Foul &gt; Developer Tools (Mac) または Menu &gt; Developer Tools (Windows) を選択して開きます。</p>
+</li>
+<li><p>overwrite</p>
+<p>Selector 欄で選択したファイルに上書きします。</p>
+</li>
+<li><p>save as</p>
+<p>指定したパスのファイルに出力します。選択肢の下に用意されたテキストエリアに記述した Javascript コードで出力先のパスを指定します。</p>
+<p>変数 selectedFilePath の値は、Selector 欄で選択したファイルのパスです。たとえば、selectedFilePath.replace( /.csv/, &quot;.json&quot;  ) と記述すると、元のファイルの拡張子を json に置き換えた名前のファイルに出力します。</p>
+</li>
+</ul>
+<p>たとえば、最終的な出力結果をリモートのサーバーに POST するなど、上記のいずれにも当てはまらない処理を最後に行いたいときは、none を選択し、最後に実行されるスクリプトファイル内で、実行するとよいでしょう。</p>
+<h3 id="run-">Run !</h3>
+<p>Selector 欄でファイルが選択され、Filters 欄にスクリプトファイルが配置されると、「Run」ボタンがアクティブになります。</p>
+<p>「Run」ボタンをクリックすると、Selector、Filters、Terminator 欄で決定されたシナリオにしたがって、変換作業が実行されます。</p>
+<p>作業中のファイルのオープンや保存に関する作業ログが、Selector 欄の下に表示されます。</p>
+<p>変換作業が終了すると、Selector 欄の表示が更新されます。</p>
+<h3 id="-">リフレッシュ</h3>
+<p>「Refresh」ボタンをクリックすると、Selector 欄の内容を更新します。</p>
+<p>ちなみに、Selector 欄で選択されたファイル、Filters 欄で指定されたスクリプトファイルの内容は、変換作業実行時に読み込まれるので、フォルダを選択した後で、それらのファイルの内容を書き換えたとしても、Pipeline をロードし直したり、「Refresh」ボタンをクリックする必要はありません。</p>
+<h3 id="-">設定の保存</h3>
+<p>「Save Settings」をクリックすると、Selector 欄、Filters 欄、Terminator 欄の状態を、選択されているフォルダの .pipeline ファイルに保存します。</p>
+<p>Pipeline は、フォルダが選択されたとき、.pipeline ファイルが存在していれば、その内容に応じて Selector 欄、Filters 欄、Terminator 欄を初期化します。</p>
+<p>フォルダをコピーまたは移動しても、.pipeline ファイルが含まれていれば、コピー先、移動先で保存された状態を再現することができます。</p>
+
+	</div>
+	<footer>&copy; <a href="https://github.com/takahashihideki-git">takahashihideki</a></footer>
 </body>
 </html>

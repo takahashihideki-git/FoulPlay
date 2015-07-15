@@ -3,8 +3,53 @@
 <head>
 <mata charset="utf-8">
 <title>{title}</title>
+<link rel="stylesheet" href="../css/bootstrap.min.css"> 
+<style type="text/css">
+	body {
+		font-size: 14px;
+	}
+	header {
+		box-sizing: boder-box;
+		padding-top: 53px;
+		height: 150px;
+		font-size: 100%;
+		color: #fff;
+		background-color: #333;
+		background-image: url("img/icon_512x512.png");
+		background-repeat: no-repeat;
+		background-size: 100px 100px;
+		background-position: 1em 25px;		
+	}
+	header h1 {
+		margin: 0;
+		margin-left: 140px;
+		font-size: 40px;
+	}
+	.container {
+		margin: 1em;
+		padding-bottom: 2em;
+	}
+	h1, h2, h3, h4 {
+		margin-top: 2em;
+		margin-bottom: 2em;
+	}
+	footer {
+		padding: 2em;
+		text-align: center;
+		color: #fff;
+		background-color: #333;
+	}
+	footer a,
+	footer a:hover {
+		color: #fff;
+	}
+</style>
 </head>
 <body>
-{body}
+	<header><h1>Foul Play</h1></header>
+	<div class="container">
+		{body}
+	</div>
+	<footer>&copy; <a href="https://github.com/takahashihideki-git">takahashihideki</a></footer>
 </body>
 </html>
