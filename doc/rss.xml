@@ -5,19 +5,10 @@
     <description><![CDATA[SPAs on Foul]]></description>
     <link>http://takahashihideki-git.github.io/FoulPlay/doc/index.html</link>
     <generator>RSS for Node</generator>
-    <lastBuildDate>Thu, 16 Jul 2015 13:28:59 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 16 Jul 2015 13:46:10 GMT</lastBuildDate>
     <atom:link href="http://takahashihideki-git.github.io/FoulPlay/doc/rss.xml" rel="self" type="application/rss+xml"/>
     <author><![CDATA[takahashihideki]]></author>
     <copyright><![CDATA[takahashihideki]]></copyright>
-    <item>
-      <title><![CDATA[Test]]></title>
-      <description><![CDATA[複数のテキストファイルの内容を、一定の規則にしたがって、一括して一挙に書き換える類の仕事を、なるべく手っ取り早く、しかもなるべく簡単な Javascript だけでやっつけるための、ザ、"GUIコンソール"。フォルダを選択フィルターを指定ターミネーターを設定ファイルを選択Pipeline = セレクター、フィルターズ、ターミネーターRun !フィルターがfalseを返せばもっと凝ったターミネーターが必要ならfoul = 事実上の node.js だから、なんでもできる。リフレッシュ設定の保存Pipeline.log, Pipeline.error]]></description>
-      <link>http://takahashihideki-git.github.io/FoulPlay/doc/test.html</link>
-      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/test.html</guid>
-      <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Thu, 16 Jul 2015 13:10:43 GMT</pubDate>
-      <image></image>
-    </item>
     <item>
       <title><![CDATA[Pipeline]]></title>
       <description><![CDATA[Pipeline は、複数のテキストファイルの内容を、専用のスクリプトによって一挙に書き換えるような、一括変換作業に奉仕する "GUIコンソール" アプリです。Pipeline は、ローカルファイルシステムの特定のフォルダを対象にして動作します。一括変換作業の実行者は、Pipeline で任意のフォルダを開き、次の3つの操作パネルの設定を通じて、変換作業のシナリオを決定します。「Selector」で、一括変換の対象となるテキストファイルを選択します。「Filters」で、変換を行うスクリプトファイルを指定し、複数のスクリプトファイルを指定した場合は、実行順序を設定します。「Terminator」 で、変換結果の出力方法を設定します。Pipeline は、このように、一括変換作業のシナリオを条件や目的に応じて実行者が自由に設定できるようにすることで、テキストの変換を行うスクリプトの責任を軽減]]></description>
