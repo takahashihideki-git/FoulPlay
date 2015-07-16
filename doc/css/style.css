@@ -1,0 +1,70 @@
+body {
+	font-size: 16px;
+	line-height: 1.8;
+	font-family: "Helvetica Neue",Helvetica,Arial,"ヒラギノ角ゴ ProN W3","Hiragino Kaku Gothic ProN","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","メイリオ", Meiryo,"MS ゴシック","MS Gothic",sans-serif;
+	background-color: #333;
+}
+header {
+	box-sizing: boder-box;
+	padding-top: 53px;
+	height: 150px;
+	font-size: 100%;
+	color: #fff;
+	background-color: #333;
+	background-image: url("../img/icon_512x512.png");
+	background-repeat: no-repeat;
+	background-size: 100px 100px;
+	background-position: 1em 25px;		
+}
+header h1 {
+	margin: 0;
+	margin-left: 140px;
+	font-size: 40px;
+}
+.container {
+	width: auto;
+	margin: 0;
+	padding: 0 2em;
+	background-color: #fff;
+}
+h1, h2, h3, h4 {
+	margin-top: 2em;
+	margin-bottom: 2em;
+	font-weight: bold;
+}
+footer {
+	padding: 2em;
+	text-align: center;
+	color: #fff;
+	background-color: #333;
+}
+footer a,
+footer a:hover {
+	color: #fff;
+}
+.icon {
+	background-size: cover;
+}
+.icon-label {
+	display: none;
+}
+.icon-index {
+	background-image: url( "../img/ic_menu_white_48dp.png" );
+}
+header .icon-index {
+	position: absolute;
+	top: 50px;
+	right: 15px;
+	width: 60px;
+	height: 60px;
+}
+.icon-index-bottom {
+	width: 40px;
+	height: 40px;
+	margin: 2em auto;
+	background-color: #333;
+	border-radius: 40px;
+	background-size: 20px 20px;
+  	background-repeat: no-repeat;
+  	background-position: center;
+}

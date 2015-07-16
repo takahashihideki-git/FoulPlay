@@ -1,7 +1,5 @@
 var filter = function ( content, context, next ) {
 
-console.log( JSON.stringify( context.info ) );
-
 	if ( ! context.globalContext.pages ) {
 		context.globalContext.pages = new Array();
 	}
@@ -10,13 +8,15 @@ console.log( JSON.stringify( context.info ) );
 	var dom = parser.parseFromString( content, "text/html" )
 	var paragraphs = dom.querySelectorAll( "p" );
 	var description = "";
+	var descriptionMax = 400;
+
 	for ( var i = 0; i < paragraphs.length; i++ ) {
 		description += paragraphs[ i ].innerText;
-		if ( description.length > 100 ) {
+		if ( description.length > descriptionMax ) {
 			break;
 		}
 	}
-	description = description.substr( 0, 100 ); 
+	description = description.substr( 0, descriptionMax ); 
 	var image = dom.querySelector( "img" );
 	var imageSrc = "";
 	if ( image ) {
@@ -26,9 +26,9 @@ console.log( JSON.stringify( context.info ) );
 	context.globalContext.pages.push( {
 		title: context.title,
 		description: description,
-		path: context.path.replace( /\.md$/, ".html" ),
+		path: PATH.basename( context.path ).replace( /\.md$/, ".html" ),
 		image: imageSrc,
-		update: context.info.birthTime
+		update: context.info.modifiedTime
 	} );
 
 	if ( ! context.globalContext.done ) {
@@ -50,7 +50,7 @@ console.log( JSON.stringify( context.info ) );
 		} );
 
 		context.globalContext.pages.sort( function ( a, b ) {
-			return a.update - b.update;
+			return b.update - a.update;
 		} );
 
 		var documentRoot = "http://takahashihideki-git.github.io/FoulPlay/doc/";

@@ -1,52 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<mata charset="utf-8">
+<meta charset="UTF-8">
 <title>Pipeline</title>
 <link rel="stylesheet" href="../css/bootstrap.min.css"> 
-<style type="text/css">
-	body {
-		font-size: 14px;
-	}
-	header {
-		box-sizing: boder-box;
-		padding-top: 53px;
-		height: 150px;
-		font-size: 100%;
-		color: #fff;
-		background-color: #333;
-		background-image: url("img/icon_512x512.png");
-		background-repeat: no-repeat;
-		background-size: 100px 100px;
-		background-position: 1em 25px;		
-	}
-	header h1 {
-		margin: 0;
-		margin-left: 140px;
-		font-size: 40px;
-	}
-	.container {
-		margin: 1em;
-		padding-bottom: 2em;
-	}
-	h1, h2, h3, h4 {
-		margin-top: 2em;
-		margin-bottom: 2em;
-	}
-	footer {
-		padding: 2em;
-		text-align: center;
-		color: #fff;
-		background-color: #333;
-	}
-	footer a,
-	footer a:hover {
-		color: #fff;
-	}
-</style>
+<link rel="stylesheet" href="css/style.css"> 
 </head>
 <body>
-	<header><h1>Foul Play</h1></header>
+	<header>
+		<h1>Foul Play</h1>
+		<a href="index.html"><div class="icon icon-index"><span class="icon-label">index</span></div></a>
+	</header>
 	<div class="container">
 		<h1 id="pipeline">Pipeline</h1>
 <p>Pipeline は、複数のテキストファイルの内容を、専用のスクリプトによって一挙に書き換えるような、一括変換作業に奉仕する &quot;GUIコンソール&quot; アプリです。</p>
@@ -156,6 +120,7 @@ Pipeline.error( message ) // Pipeline の画面上にエラーとして出力し
 <p>Pipeline は、フォルダが選択されたとき、.pipeline ファイルが存在していれば、その内容に応じて Selector 欄、Filters 欄、Terminator 欄を初期化します。</p>
 <p>フォルダをコピーまたは移動しても、.pipeline ファイルが含まれていれば、コピー先、移動先で保存された状態を再現することができます。</p>
 
+		<a href="index.html"><div class="icon icon-index icon-index-bottom"><span class="icon-label">index</span></div></a>
 	</div>
 	<footer>&copy; <a href="https://github.com/takahashihideki-git">takahashihideki</a></footer>
 </body>
