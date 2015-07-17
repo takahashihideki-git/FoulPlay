@@ -78,7 +78,7 @@ filter 関数には、次の引数が渡されます。
 
         { 
             path: ファイルのパス
-            info: ファイルの情報 → https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
+            info: ファイルの情報 → 詳細は、https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray- を参照
             index:　全処理対象ファイル中の処理順　0 〜
             globalContext: {
                 root: Pipelneが適用されたフォルダのパス

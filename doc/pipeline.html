@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Pipeline</title>
+<link rel="alternate" type="application/atom+xml" href="http://takahashihideki-git.github.io/FoulPlay/doc/feed.xml" title="Foul Play" />
 <link rel="stylesheet" href="../css/bootstrap.min.css"> 
 <link rel="stylesheet" href="css/style.css"> 
 </head>
@@ -11,7 +12,8 @@
 		<h1>Foul Play</h1>
 		<a href="index.html"><div class="icon icon-index"><span class="icon-label">index</span></div></a>
 	</header>
-	<div class="container">
+	<div class="container article">
+    <div class="pubdate">2015-07-17 09:14</div>
 		<h1 id="pipeline">Pipeline</h1>
 <p>Pipeline は、複数のテキストファイルの内容を、専用のスクリプトによって一挙に書き換えるような、一括変換作業に奉仕する &quot;GUIコンソール&quot; アプリです。</p>
 <p>Pipeline は、ローカルファイルシステムの特定のフォルダを対象にして動作します。一括変換作業の実行者は、Pipeline で任意のフォルダを開き、次の3つの操作パネルの設定を通じて、変換作業のシナリオを決定します。</p>
@@ -59,7 +61,7 @@
 <li><p>第二引数: 次の内容の処理コンテキストオブジェクト</p>
 <pre><code> { 
      path: ファイルのパス
-     info: ファイルの情報 → https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray-
+     info: ファイルの情報 → 詳細は、https://github.com/takahashihideki-git/Foul/wiki/window.fileSystem#successfunction-pathstring-filesarray- を参照
      index:　全処理対象ファイル中の処理順　0 〜
      globalContext: {
          root: Pipelneが適用されたフォルダのパス

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Foul Play</title>
+<link rel="alternate" type="application/atom+xml" href="http://takahashihideki-git.github.io/FoulPlay/doc/feed.xml" title="Foul Play" />
 <link rel="stylesheet" href="../css/bootstrap.min.css"> 
 <link rel="stylesheet" href="css/style.css"> 
 <style>
@@ -137,7 +138,7 @@ window.onload = function () {
 	      initialize( xhr.responseText );
 		}
 	}
-	xhr.open( "GET", "rss.xml" );
+	xhr.open( "GET", "feed.xml" );
 	xhr.send();
 
 }

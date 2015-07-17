@@ -72,10 +72,10 @@ var filter = function ( content, context, next ) {
 
 		}
 
-		var rssPath = PATH.resolve( Pipeline.selector.root.path + "/rss.xml" )
+		var feedPath = PATH.resolve( Pipeline.selector.root.path + "/feed.xml" )
 
         fileSystem.save( {
-            path: rssPath,
+            path: feedPath,
             content: feed.xml( "  " ),
             success: function ( path ) {
                 Pipeline.log( "Save: " + path ) 
