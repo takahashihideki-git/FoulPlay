@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" /><title>Mergely
+	</title>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1, IE=edge">
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	<meta name="description" content="Merge and Diff your documents with diff online and share" />
+	<meta name="keywords" content="diff,merge,compare,jsdiff,comparison,difference,file,text,unix,patch,algorithm,saas,longest common subsequence" />
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+
+	<!-- Requires jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>
+
+	<!-- Requires CodeMirror -->
+	<script type="text/javascript" src="js/mergely/codemirror.js"></script>
+	<link type="text/css" rel="stylesheet" href="js/mergely/codemirror.css" />
+
+	<!-- Requires Mergely -->
+	<script type="text/javascript" src="js/mergely/mergely.js"></script>
+	<link type="text/css" rel="stylesheet" href="js/mergely/mergely.css" />
+
+	<style type='text/css'>
+	body {
+		margin: 0;
+		padding: 0;
+		font-family: "Apple TP","Helvetica Neue","Helvetica","Hiragino Kaku Gothic Pro","ヒラギノ角ゴ Pro W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","Arial","Verdana","sans-serif";
+	}
+	header {
+		margin: 1em;
+	}
+	#parameter {
+	  box-sizing: border-box;
+	  width: 100%;
+	  padding: 1em 0.5em;
+	  background-color: #eee;
+	}
+	#parameter table {
+	  font-size: 80%;
+	}
+	#parameter td {
+		padding-top: 0.5em;
+		padding-bottom: 0.5em;
+	}
+	input[name=url1],
+	input[name=url2] {
+		width: 450px;
+		margin-left: 1em;
+	}
+	input#ignorews {
+	    margin:0;
+		margin-left: 1em;
+		margin-right: 0.5em;
+		vertical-align: middle;
+	}
+	input[value=diff] {
+	    display: block;
+	    margin-top: 0.5em;
+		margin-left: 1em;
+	}
+	#mergely-resizer {
+		position: relative;
+		margin-top: 3em;
+	}
+	#compare-editor-lhs:before {
+		content: "URL1";
+	  position: absolute;
+	  top: -24px;
+	  font-size: 80%;
+	}
+	#compare-editor-rhs:before {
+		content: "URL2";
+	  position: absolute;
+	  top: -24px;
+	  font-size: 80%;
+	}
+	.CodeMirror {
+	  border-bottom: 1px solid #ccc;
+	}
+	footer {
+		margin-top: 1em;
+		padding: 1em;
+		text-align: center;
+	}
+	</style>
+	<script type="text/javascript">
+
+		var diff = function () {
+
+			var lhs_url = $('input[name=url1]').val();
+			var rhs_url = $('input[name=url2]').val();
+			$.ajax({
+				type: 'GET', async: true, dataType: 'text',
+				url: lhs_url,
+				success: function (response) {
+					$('#compare').mergely('lhs', response);
+				}
+			});
+			$.ajax({
+				type: 'GET', async: true, dataType: 'text',
+				url: rhs_url,
+				success: function (response) {
+					$('#compare').mergely('rhs', response);
+				}
+			});
+
+		}
+
+		$(document).ready(function () {
+
+			$( '#compare' ).mergely({
+				width: 'auto',
+				height: 'auto', // containing div must be given a height
+				cmsettings: { readOnly: false },
+			});
+			$( '#compare' ).mergely( 'resize' );
+
+			document.getElementById('execute-diff').addEventListener( 'click', function () { diff() }, false );
+			document.getElementById('ignorews').addEventListener('change', function() {
+				$('#compare').mergely('options', { ignorews: this.checked });
+			}, false);
+
+		});
+
+	</script>
+</head>
+<body style="width: 100%;">
+	
+	<header><h1>Mergely</h1></header>
+
+	<form id="parameter">
+		<table>
+			<tr>
+				<th>URL1:</th>
+				<td><input type="text" name="url1"></td>
+			</tr>
+			<tr>
+				<th>URL2:</th>
+				<td><input type="text" name="url2"></td>
+			</tr>
+			<tr>
+				<th></th>
+				<td><label><input type="checkbox" id="ignorews">ignore witespaces</label></td>
+			</tr>
+			<tr>
+				<th></th>
+				<td><input id="execute-diff" type="button" value="diff"></td>
+			</tr>
+		</table>
+	</form>
+
+	<div id="mergely-resizer" style="height: 450px;">
+		<div id="compare">
+		</div>
+	</div>
+
+	<footer>
+		Powerd by <a href="http://www.mergely.com/">mergely</a>
+	</footer>
+
+</body>
+</html>
