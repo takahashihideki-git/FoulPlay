@@ -5,17 +5,35 @@
     <description><![CDATA[SPAs on Foul]]></description>
     <link>http://takahashihideki-git.github.io/FoulPlay/doc/index.html</link>
     <generator>RSS for Node</generator>
-    <lastBuildDate>Fri, 17 Jul 2015 00:30:48 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 18 Jul 2015 13:08:47 GMT</lastBuildDate>
     <atom:link href="http://takahashihideki-git.github.io/FoulPlay/doc/rss.xml" rel="self" type="application/rss+xml"/>
     <author><![CDATA[takahashihideki]]></author>
     <copyright><![CDATA[takahashihideki]]></copyright>
+    <item>
+      <title><![CDATA[Markdown Editor]]></title>
+      <description><![CDATA[Markdown Editor は、マークダウン形式でマークアップされたテキストを編集し、HTMLコードへの変換結果をプレビューし、ローカルファイルとして保存するためのアプリです。HTMLコードへの変換には、marked を使用しています。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/markdownEditor.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、ローカルファイルシステムにアクセスできるようになります。左側のペインにマークアップテキストを記述すると、即座にHTMLコードへの変換され、ブラウザにレンダリングされた結果が右側のペインに表示さ]]></description>
+      <link>http://takahashihideki-git.github.io/FoulPlay/doc/markdownEditor.html</link>
+      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/markdownEditor.html</guid>
+      <dc:creator><![CDATA[takahashihideki]]></dc:creator>
+      <pubDate>Sat, 18 Jul 2015 13:06:40 GMT</pubDate>
+      <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/markdownEditor.png</image>
+    </item>
+    <item>
+      <title><![CDATA[Diff Two Urls]]></title>
+      <description><![CDATA[Diff Two Urls は、2つの URL の HTTP レスポンスボディの内容を比較するためのアプリです。実体は、mergely です。制約のない Cross-Origin XMLHttpRequest を実行できる Foul で mergely を動作させることによって、ドメインを超えた「diff」を自由に実行できるようになります。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/diffTwoUrls.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、ローカルファイルシステムにアクセスできるようになります。左右のペインにそれぞれの URL の H]]></description>
+      <link>http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</link>
+      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</guid>
+      <dc:creator><![CDATA[takahashihideki]]></dc:creator>
+      <pubDate>Sat, 18 Jul 2015 12:41:16 GMT</pubDate>
+      <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/diffTwoUrls.png</image>
+    </item>
     <item>
       <title><![CDATA[Pipeline]]></title>
       <description><![CDATA[Pipeline は、複数のテキストファイルの内容を、専用のスクリプトによって一挙に書き換えるような、一括変換作業に奉仕する "GUIコンソール" アプリです。Pipeline は、ローカルファイルシステムの特定のフォルダを対象にして動作します。一括変換作業の実行者は、Pipeline で任意のフォルダを開き、次の3つの操作パネルの設定を通じて、変換作業のシナリオを決定します。「Selector」で、一括変換の対象となるテキストファイルを選択します。「Filters」で、変換を行うスクリプトファイルを指定し、複数のスクリプトファイルを指定した場合は、実行順序を設定します。「Terminator」 で、変換結果の出力方法を設定します。Pipeline は、このように、一括変換作業のシナリオを条件や目的に応じて実行者が自由に設定できるようにすることで、テキストの変換を行うスクリプトの責任を軽減]]></description>
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/pipeline.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/pipeline.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Fri, 17 Jul 2015 00:14:48 GMT</pubDate>
+      <pubDate>Sat, 18 Jul 2015 12:26:58 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/pipeline2.png</image>
     </item>
   </channel>
