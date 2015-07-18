@@ -93,6 +93,9 @@ textarea {
   height: 100%;
   overflow: hidden;
 }
+.content .placeholder {
+  color: #ccc;
+}
 </style>
 </head>
 <body>
@@ -114,12 +117,12 @@ textarea {
   <tr>
     <td class="markdown">
       <div class="resizer noscroll">
-        <form><textarea></textarea></form>
+        <form><textarea placeholder="Markdown Text"></textarea></form>
       </div>
     </td>
     <td class="html">
       <div class="resizer">
-        <div class="content"></div>
+        <div class="content"><span class="placeholder">Converted HTML Code</span></div>
       </div>
     </td>
   </tr>
@@ -136,7 +139,7 @@ var open = function () {
     success: function ( path, data ) {
       document.querySelector( ".path input" ).value = path;
       document.querySelector( "textarea" ).value = data;
-      document.querySelector( ".html .content" ).innerHTML = marked( data );
+      preview( marked( data ) );
     },
     error: function ( path, data ) {
       alert( path + " " + data );
@@ -159,6 +162,15 @@ var save = function ( path, content ) {
         alert( path + " " + data );
       }
     } );
+}
+
+var preview = function ( html ) {
+  if ( html ) {
+    document.querySelector( ".html .content" ).innerHTML = html;
+  }
+  else {
+    document.querySelector( ".html .content" ).innerHTML = '<span class="placeholder">Converted HTML Code</span>';   
+  }
 }
 
 var resize = function () {
@@ -187,7 +199,7 @@ window.onload = function () {
   } );
 
   document.querySelector( ".markdown textarea" ).addEventListener( "keyup", function () {
-    document.querySelector( ".html .content" ).innerHTML = marked( this.value );
+    preview( marked( this.value ) );
   } );
 
   document.querySelector( "textarea" ).focus();
