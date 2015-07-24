@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HTTP Server</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<style>
+body {
+    margin: 1em;
+    font-family: "Myriad Set Pro","Lucida Grande","Helvetica Neue","Helvetica","Arial","Verdana","sans-serif";
+}
+</style>
+</head>
+<body>
+
+<h1>HTTP Server</h1>
+
+<p class="host"></p>
+
+<p><button style="display:none">close</button></p>
+
+<script>
+
+// http://stackoverflow.com/a/15075395
+function getIPAddress() {
+
+  var interfaces = require('os').networkInterfaces();
+
+  for (var devName in interfaces) {
+
+    var iface = interfaces[devName];
+
+    for (var i = 0; i < iface.length; i++) {
+      var alias = iface[i];
+      if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal)
+        return alias.address;
+    }
+
+  }
+
+  return '0.0.0.0';
+
+}
+
+window.onFoul = function () {
+
+	var localIpAddress = getIPAddress();
+
+	var http = require( "http" );
+	var port = "1337";
+
+	var server = http.createServer( function ( req, res ) {
+	  res.writeHead( 200, {'Content-Type': 'text/plain'});
+	  res.end( 'Local HTTP Server2\n' );
+	} ).listen( port, localIpAddress );	
+
+	document.querySelector( ".host" ).innerHTML = "http://" + localIpAddress + ":" + port;
+
+	document.querySelector( "button" ).addEventListener( "click", function () {
+		server.close();
+	} );
+	document.querySelector( "button" ).style.display = "block";
+
+	//http://qiita.com/_shimizu/items/094c4beace9c7a36deb1 これでいこう
+
+}
+
+</script>
+
+</body>
+</html>
