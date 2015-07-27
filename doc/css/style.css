@@ -5,7 +5,7 @@ body {
 	background-color: #333;
 }
 header {
-	box-sizing: boder-box;
+	box-sizing: border-box;
 	padding-top: 53px;
 	height: 150px;
 	font-size: 100%;
