@@ -5,27 +5,27 @@
     <description><![CDATA[SPAs on Foul]]></description>
     <link>http://takahashihideki-git.github.io/FoulPlay/doc/index.html</link>
     <generator>RSS for Node</generator>
-    <lastBuildDate>Mon, 27 Jul 2015 12:37:18 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 27 Jul 2015 18:37:24 GMT</lastBuildDate>
     <atom:link href="http://takahashihideki-git.github.io/FoulPlay/doc/rss.xml" rel="self" type="application/rss+xml"/>
     <author><![CDATA[takahashihideki]]></author>
     <copyright><![CDATA[takahashihideki]]></copyright>
+    <item>
+      <title><![CDATA[Diff Two Urls]]></title>
+      <description><![CDATA[Diff Two Urls は、2つの URL の HTTP レスポンスボディの内容を比較するためのアプリです。実体は、mergely です。制約のない Cross-Origin XMLHttpRequest を実行できる Foul で mergely を動作させることによって、ドメインを超えた「diff」を自由に実行できるようになります。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/diffTwoUrls.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、Cross-Origin XMLHttpRequest を実行できるようになります。左右のペイン]]></description>
+      <link>http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</link>
+      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</guid>
+      <dc:creator><![CDATA[takahashihideki]]></dc:creator>
+      <pubDate>Mon, 27 Jul 2015 17:47:36 GMT</pubDate>
+      <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/diffTwoUrls.png</image>
+    </item>
     <item>
       <title><![CDATA[Simple Http Server]]></title>
       <description><![CDATA[Simple Http Server は、簡易的な Local Network (LAN) HTTP サーバーとして動作するアプリです。ローカルファイルシステムの任意のフォルダをドキュメントルートに指定することができます。また、サーバーの起動中、いつでもドキュメントルートを別のフォルダに切り替えることができます。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/simpleHttpServer.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、Local Network HTTPサーバーが起動します。HTTPサーバーが起動すると、「host」欄に、IPアド]]></description>
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/simpleHttpServer.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/simpleHttpServer.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Mon, 27 Jul 2015 12:36:35 GMT</pubDate>
+      <pubDate>Mon, 27 Jul 2015 17:47:36 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/simpleHttpServer.png</image>
-    </item>
-    <item>
-      <title><![CDATA[Diff Two Urls]]></title>
-      <description><![CDATA[Diff Two Urls は、2つの URL の HTTP レスポンスボディの内容を比較するためのアプリです。実体は、mergely です。制約のない Cross-Origin XMLHttpRequest を実行できる Foul で mergely を動作させることによって、ドメインを超えた「diff」を自由に実行できるようになります。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/diffTwoUrls.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、ローカルファイルシステムにアクセスできるようになります。左右のペインにそれぞれの URL の H]]></description>
-      <link>http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</link>
-      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</guid>
-      <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Tue, 21 Jul 2015 06:29:09 GMT</pubDate>
-      <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/diffTwoUrls.png</image>
     </item>
     <item>
       <title><![CDATA[Markdown Editor]]></title>
@@ -33,7 +33,7 @@
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/markdownEditor.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/markdownEditor.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Tue, 21 Jul 2015 06:29:09 GMT</pubDate>
+      <pubDate>Sat, 18 Jul 2015 13:15:37 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/markdownEditor.png</image>
     </item>
     <item>
@@ -42,7 +42,7 @@
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/pipeline.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/pipeline.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Fri, 17 Jul 2015 05:57:57 GMT</pubDate>
+      <pubDate>Sat, 18 Jul 2015 12:26:58 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/pipeline2.png</image>
     </item>
   </channel>
