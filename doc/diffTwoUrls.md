@@ -14,7 +14,7 @@ Diff Two Urls は、2つの URL の HTTP レスポンスボディの内容を比
 
 http://takahashihideki-git.github.io/FoulPlay/diffTwoUrls.html
 
-その後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、ローカルファイルシステムにアクセスできるようになります。
+その後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、Cross-Origin XMLHttpRequest を実行できるようになります。
 
 ### URLを入力して「diff」ボタンをクリック
 

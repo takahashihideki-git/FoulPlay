@@ -41,6 +41,10 @@
 .description p.last {
 	display: inline;
 }
+.inlineLink {
+	display: block;
+	margin: 1em;
+}
 </style>
 </head>
 <body>
@@ -87,7 +91,7 @@ var initialize = function ( feed ) {
 			var html = template.replace( /{image}/, image ? "img/" + image : "" )
 							   .replace( /{link}/g, getFileName( link ) )
 							   .replace( /{title}/, title )
-							   .replace( /{description}/, paragraphize( description ) )
+							   .replace( /{description}/, paragraphize( anchorize( description ) ) )
 							   .replace( /{pubdate}/, getLocalTime( pubdate ) );
 			container.innerHTML = container.innerHTML + html;
 
@@ -128,6 +132,14 @@ var paragraphize = function ( text ) {
 		}
 		return value;
 	} ).join( "" );
+}
+
+var anchorize = function ( text ) {
+console.log( text );
+	return text.replace( /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/\?%&=]*)?/g, function ( match ) {
+console.log( match );
+		return "<a class='inlineLink' href='" + match + "'>" + match + "</a>"
+	} );
 }
 
 window.onload = function () {

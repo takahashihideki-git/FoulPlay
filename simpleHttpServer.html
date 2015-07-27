@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Simple HTTP Server</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<style>
+body {
+    margin: 1em;
+    font-family: "Myriad Set Pro","Lucida Grande","Helvetica Neue","Helvetica","Arial","Verdana","sans-serif";
+}
+th, td {
+	padding: 0.5em 0 0.5em 1em;
+}
+th {
+	text-align: right;
+}
+input {
+	margin-right: 1em;
+}
+input[name=folder],
+input[name=host] {
+	width: 40em;
+	padding: 0 0.5em;
+}
+input[type=button][disabled=disabled] {
+	opacity: 0.5;
+}
+.howToShutDown {
+	margin: 0;
+	color: #F4138A;
+}
+</style>
+</head>
+<body>
+
+<h1>Simple HTTP Server</h1>
+
+<form>
+	<table>
+		<tr class="property property-documentRoot">
+			<th>Document Root:</th>
+			<td><input name="folder" type="text"><input type="button" value="Select Folder"></td>
+		</tr>
+		<tr class="property property-host">
+			<th>Host:</th>
+			<td><input name="host" type="text" disabled="disabled"></td>
+		</tr>
+		<tr class="buttons">
+			<th></th>
+			<td>
+				<p class="howToShutDown">To shut down the HTTP server process, quit Foul completely.</p>
+			</td>
+		</tr>
+	</table>
+</form>
+
+<script>
+
+// Node.js Modules
+var remote = require( "remote" );
+var os     = remote.require( "os" );
+var http   = remote.require( "http" );
+var url    = remote.require( "url" );
+var path   = remote.require( "path" );
+var fs     = remote.require( "fs" );
+
+var Server = function () {
+
+	this.localIpAddress = this.getIPAddress();
+	document.querySelector( "input[name=host]" ).value = "http://" + this.localIpAddress + ":" + this.port;
+	this.start();
+
+}
+Server.prototype = {
+
+	documentRootPath: "",
+	localIpAddress: "",
+	port: "1337",
+	//port: "3000",
+	process: null,
+
+	start: function () {
+
+		if ( this.process ) {
+			alert( "Server is already running." );
+			return;
+		}
+
+		// http://qiita.com/_shimizu/items/094c4beace9c7a36deb1
+
+		var server = this;
+
+		server.process = http.createServer( function( request, response ) {
+
+		    var Response = {
+		        "200": function( file, filename ){
+		            var extname = path.extname( filename );
+		            var header = {
+		                "Access-Control-Allow-Origin":"*",
+		                "Pragma": "no-cache",
+		                "Cache-Control" : "no-cache"       
+		            }
+		            response.writeHead( 200, header );
+		            response.write( file, "binary" );
+		            response.end();
+		        },
+		        "404": function(){
+		            response.writeHead( 404, { "Content-Type": "text/plain" } );
+		            response.write( "404 Not Found\n" );
+		            response.end();
+		        },
+		        "500": function( err ){
+		            response.writeHead( 500, { "Content-Type": "text/plain" } );
+		            response.write( err + "\n" );
+		            response.end();
+		        }
+		    }
+
+		    var uri = url.parse( request.url ).pathname.replace( /^\//, "" );
+	    	var filename = path.resolve( server.documentRootPath, uri );
+
+		    fs.exists( filename, function( exists ){
+		        console.log( filename + " " + exists );
+		        if ( !exists ) { Response[ "404" ](); return ; }
+		        if ( fs.statSync( filename ).isDirectory() ) { filename += '/index.html'; }
+		        fs.readFile( filename, "binary", function( err, file ){
+		        if ( err ) { Response[ "500" ]( err ); return ; }
+		            Response[ "200" ]( file, filename );   
+		        } ); 
+		    } );
+
+		} ).listen( server.port, server.localIpAddress );
+
+	},
+
+	getIPAddress: function () {
+
+		// return "127.0.0.1"
+
+		// http://stackoverflow.com/a/15075395
+
+		var interfaces = os.networkInterfaces();
+
+		for (var devName in interfaces) {
+
+	    	var iface = interfaces[ devName ];
+
+	    	for (var i = 0; i < iface.length; i++) {
+	    		var alias = iface[ i ];
+	    		if ( alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal ) {
+	        		return alias.address;
+	      		}
+	    	}
+
+	  	}
+
+	  	return '0.0.0.0';
+
+	},
+
+	setDocumentRootPath: function ( path ) {
+
+		this.documentRootPath = path;
+		document.querySelector( "input[name=folder]" ).value = this.documentRootPath;
+
+	}
+
+}
+
+var server;
+
+window.onFoul = function () {
+
+	server = new Server();
+
+    // set base folder selector
+    document.querySelector( ".property-documentRoot input[type=button]" ).addEventListener( "click", function () {
+        fileSystem.selectFolder( {
+            path: "", 
+            callback: function ( path ) {
+                if ( path ) {
+                    server.setDocumentRootPath( path );
+                }
+            }
+        } )
+    } );
+
+}
+
+</script>
+
+</body>
+</html>
