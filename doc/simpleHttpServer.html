@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Simple Http Server</title>
+<link rel="alternate" type="application/atom+xml" href="http://takahashihideki-git.github.io/FoulPlay/doc/feed.xml" title="Foul Play" />
+<link rel="stylesheet" href="../css/bootstrap.min.css"> 
+<link rel="stylesheet" href="css/style.css"> 
+</head>
+<body>
+	<header>
+		<h1>Foul Play</h1>
+		<a href="index.html"><div class="icon icon-index"><span class="icon-label">index</span></div></a>
+	</header>
+	<div class="container article">
+    <div class="pubdate">2015-07-27 21:36</div>
+		<h1 id="simple-http-server">Simple Http Server</h1>
+<p>Simple Http Server は、簡易的な Local Network (LAN) HTTP サーバーとして動作するアプリです。</p>
+<p>ローカルファイルシステムの任意のフォルダをドキュメントルートに指定することができます。</p>
+<p>また、サーバーの起動中、いつでもドキュメントルートを別のフォルダに切り替えることができます。</p>
+<p><img src="img/simpleHttpServer.png" style="display:block;width:60%;margin:2em auto"></p>
+<h2 id="-">使い方</h2>
+<h3 id="foul-">Foul にショートカットを登録</h3>
+<p>下記の URL を <a href="https://github.com/takahashihideki-git/Foul">Foul</a> のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。</p>
+<p><a href="http://takahashihideki-git.github.io/FoulPlay/simpleHttpServer.html">http://takahashihideki-git.github.io/FoulPlay/simpleHttpServer.html</a></p>
+<p>その後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、Local Network HTTPサーバーが起動します。</p>
+<p>HTTPサーバーが起動すると、「host」欄に、IPアドレスとポート番号からなるホスト名が表示されます。</p>
+<h3 id="-">ドキュメントルートとしてフォルダを選択</h3>
+<p>「Select Folder」ボタンをクリックすると、フォルダ選択ダイアログが開きます。</p>
+<p>フォルダを選択すると、当該のフォルダ以下に配置されている各種ファイルに、LANに接続している PC やスマートフォンのブラウザからアクセスできるようになります。</p>
+<p>たとえば、選択されたフォルダのサブフォルダ doc の sample.html には、次のURLでアクセスすることができます。</p>
+<pre><code># e.g. 「host」欄に、「http://192.168.0.109:1337」と表示されている場合
+
+http://192.168.0.109:1337/doc/sample.html
+</code></pre><h3 id="-">シャットダウン</h3>
+<p>サーバーをシャットダウンするには、Foul を終了する必要があります。</p>
+<h3 id="-">使用上の注意</h3>
+<p>Simple HTTP Server を表示したウィンドウで、他のページに遷移すると、HTTPサーバーは応答しなくなります。</p>
+<p>また、そのあとで、再び Simple HTTP Server を表示すると、前に起動したHTTPサーバーとの間に、使用するシステムリソースの衝突を起こしてシステムエラーが発生します。</p>
+<p>再び Simple HTTP Server を使用する場合は、いったん Foul を終了して、稼働している HTTP サーバーをシャットダウンする必要があります。</p>
+
+		<a href="index.html"><div class="icon icon-index icon-index-bottom"><span class="icon-label">index</span></div></a>
+	</div>
+	<footer>&copy; <a href="https://github.com/takahashihideki-git">takahashihideki</a></footer>
+</body>
+</html>
