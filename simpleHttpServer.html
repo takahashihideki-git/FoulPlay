@@ -99,7 +99,7 @@ Server.prototype = {
 		            var header = {
 		                "Access-Control-Allow-Origin":"*",
 		                "Pragma": "no-cache",
-		                "Cache-Control" : "no-cache"       
+		                "Cache-Control" : "no-cache"
 		            }
 		            response.writeHead( 200, header );
 		            response.write( file, "binary" );
@@ -126,8 +126,8 @@ Server.prototype = {
 		        if ( fs.statSync( filename ).isDirectory() ) { filename += '/index.html'; }
 		        fs.readFile( filename, "binary", function( err, file ){
 		        if ( err ) { Response[ "500" ]( err ); return ; }
-		            Response[ "200" ]( file, filename );   
-		        } ); 
+		            Response[ "200" ]( file, filename );
+		        } );
 		    } );
 
 		} ).listen( server.port, server.localIpAddress );
@@ -148,7 +148,7 @@ Server.prototype = {
 
 	    	for (var i = 0; i < iface.length; i++) {
 	    		var alias = iface[ i ];
-	    		if ( alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal ) {
+	    		if ( alias.family === 'IPv4' && alias.address !== '127.0.0.1' && ! alias.address.match( /^169\.254/ ) && ! alias.internal ) {
 	        		return alias.address;
 	      		}
 	    	}
@@ -177,7 +177,7 @@ window.onFoul = function () {
     // set base folder selector
     document.querySelector( ".property-documentRoot input[type=button]" ).addEventListener( "click", function () {
         fileSystem.selectFolder( {
-            path: "", 
+            path: "",
             callback: function ( path ) {
                 if ( path ) {
                     server.setDocumentRootPath( path );
