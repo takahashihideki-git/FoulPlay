@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Markdown Editor</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<style>
+  body {
+    padding: 1em;
+  }
+  .tables {
+    position: relative;
+    padding: 2em 1em 1em;
+    min-height: 100px;
+    background-color:#eee;
+    border-radius: 1em;
+  }
+  .tableContainer {
+    display: inline-block;
+    margin-right: 1em;
+    margin-bottom: 1em;
+  }
+  .tables .table {
+    position: relative;
+    display: table-cell;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .tables .table.selected {
+    background-color: #F5F3CB;
+  }
+  .table-name {
+    margin: 0;
+    padding: 0.5em;
+    border-bottom: 1px solid #ccc;
+    font-size: 100%;
+    font-weight: bold;
+  }
+  .table-titles {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  .table-titles li {
+    padding: 0.2em 0.5em;
+    border-bottom: 1px dotted #ccc;
+    font-size: 90%;
+  }
+  .table-titles li:last-child {
+    border: 0;
+  }
+  .table-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    padding: 0 0.5em;
+    border-radius: 10px;
+    background-color: #2ea2dc;
+    color: #fff;
+    font-size: 80%;
+  }
+  .button-import {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    z-index: 1;
+  }
+  .template {
+    display: none;
+  }
+</style>
+<head>
+<body>
+
+<header>
+
+  <h1>CSV Base</h1>
+
+</header>
+
+<div class="tables">
+  <button class="button button-import">Import</button>
+</div>
+
+<script type="text/x-template" class="template template-table">
+  <div class="table">
+    <h3 class="table-name">{NAME}</h3>
+    <ul class="table-titles">
+    {FOREACH TITLES}<li>{TITLE}</li>{/FOREACH}
+    </ul>
+    <div class="table-count">{COUNT}</div>
+  </div>
+</script>
+
+<script type="text/x-template" class="template template-records">
+  <table class="records">
+    
+  </table>
+</script>
+
+<script type="text/javascript" src="js/script.js"></script>
+<script>
+/**
+constant
+*/
+const PATH = require( "path" );
+
+/**
+Database Class
+*/
+var Database = function ( args ) {
+  this.container = args.container;
+  this.tables = new Object();
+  this.selectedTables = new Array();
+}
+Database.prototype = {
+
+  tables: null,
+  selectedTables: null,
+
+  create: function ( name, data ) {
+
+    var container = null;
+    var titles = data.shift();
+    var records = new Array();
+
+    for ( var i = 0; i < data.length; i++ ) {
+      ( function () {
+        var record = {};
+        for ( var j = 0; j < titles.length; j++ ) {
+          record[ titles[ j ] ] = data[ i ][ j ];
+        }
+        records.push( record )
+      } )();
+    }
+
+    this.tables[ name ] = new Table( {
+      name: name,
+      records: records,
+      database: this
+    } );
+
+    this.appendTableComponent( this.tables[ name ] );
+
+  },
+
+  select: function ( table ) {
+    this.showRecords( table.get() );
+  },
+
+  appendTableComponent: function ( table ) {
+    this.container.appendChild( table.makeComponent() );
+  },
+
+  showRecords: function ( records ) {
+    console.log( records );
+  }
+
+}
+
+/**
+Table Class
+*/
+var Table = function ( args ) {
+  this.name = args.name;
+  this.records = args.records;
+  this.query = TAFFY( this.records );
+  this.database = args.database;
+}
+Table.prototype = {
+
+  name : "",
+  records: null,
+  query: null,
+  template: document.querySelector( ".template-table" ).innerHTML,
+  database: null,
+  component: null,
+
+  makeComponent: function () {
+
+    var table = this;
+
+    var tableComponent = this.template.replace( /{NAME}/, this.name )
+                                      .replace( /{COUNT}/, this.query().count() );
+    var titlesLoopTemplate = this.template.replace( /^[\s\S]*?{FOREACH TITLES}(<li>{TITLE}<\/li>){\/FOREACH}[\s\S]*$/, function ( a, b ) { return b }  );
+    var titlesLoop = "";
+    var titles = Object.keys( this.records[ 0 ] );
+    for ( var i = 0; i < titles.length; i++ ) {
+      if ( titles[ i ] != "___id" && titles[ i ] != "___s" ) {
+        titlesLoop += titlesLoopTemplate.replace( /{TITLE}/, titles[ i ] );
+      }
+    }
+    tableComponent = tableComponent.replace( /{FOREACH TITLES}.*{\/FOREACH}/, titlesLoop );
+
+    this.component = document.createElement( "div" );
+    this.component.innerHTML = tableComponent;
+    this.component.setAttribute( "class", "tableContainer" );
+
+    this.component.querySelector( ".table" ).addEventListener( "click", function () {
+      table.select();
+      table.database.select( table );
+    } );
+
+    return this.component;
+
+  },
+
+  select: function () {
+    this.component.querySelector( ".table" ).setAttribute( "class", "table selected" )
+  },
+
+  unselect: function () {
+    this.component.querySelector( ".table" ).setAttribute( "class", "table" )
+  },
+
+  get: function ( expr ) {
+
+    if ( ! expr ) {
+      return this.query().get();
+    }
+    else {
+      return this.query( JSON.parse( expr ) ).get();
+    }
+
+  }
+
+}
+
+
+/**
+Global Commands
+*/
+
+var importCsv = function () {
+
+  window.fileSystem.open( {
+    path: "",
+    success: function ( path, data ) {
+      window.db.create( PATH.basename( path ).replace( /\.[^\.]+$/, "" ), Papa.parse( data ).data );
+    },
+    error: function ( path, data ) {
+      alert( path + " " + data );
+    }
+  } );
+
+}
+
+var db;
+
+window.onFoul = function () {
+
+  Script( "js/papaparse.min.js", null, "var module = undefined;" );
+  Script( "js/taffy-min.js", null, null, "window.TAFFY = TAFFY;" );
+
+  document.querySelector( ".button-import" ).addEventListener( "click", function () {
+    window.importCsv();
+  } );
+
+  window.db = new Database( {
+    container: document.querySelector( ".tables" )
+  } );
+
+}
+
+</script>
+
+</body>
+</html>

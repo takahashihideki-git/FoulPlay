@@ -1,11 +1,22 @@
 ( function ( namespace ) {
 
-  window[ namespace ] = function ( url, callback ) {
+  window[ namespace ] = function ( url, callback, preproc, postproc ) {
     window[ namespace ].prototype.load( url, function ( xhr ) {
+
+      if ( preproc ) {
+        eval( preproc );
+      }
+
       eval( xhr.response );
+
+      if ( postproc ) {
+        eval ( postproc );
+      }
+
       if ( callback ) {
         callback( xhr );
       }
+
     } );
   }
   window[ namespace ].prototype = {
@@ -21,7 +32,7 @@
             catch ( e ) {
               console.log( e );
             }
-          } 
+          }
           if ( callback ) {
             callback( xhr );
           }
