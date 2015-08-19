@@ -14,8 +14,14 @@
     min-height: 100px;
     background-color:#eee;
     border-radius: 1em;
+    -webkit-user-select: none;
   }
   .tableContainer {
+    display: inline-block;
+    margin-right: 1em;
+    margin-bottom: 1em;
+  }
+  .joinContainer {
     display: inline-block;
     margin-right: 1em;
     margin-bottom: 1em;
@@ -27,6 +33,16 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     cursor: pointer;
+  }
+  .tables .tips {
+    position: absolute;
+    left: 1em;
+    bottom: 0px;
+    margin: 3px;
+    color: #999;
+  }
+  .joinContainer .table {
+    border: 1px dashed #ccc;
   }
   .tables .table.selected {
     background-color: #F5F3CB;
@@ -63,9 +79,97 @@
   }
   .button-import {
     position: absolute;
+    width: 6em;
     top: 1em;
     right: 1em;
     z-index: 1;
+  }
+  .records {
+    position: relative;
+    padding: 1em;
+    background-color: #333;
+    border-radius: 1em;
+    color: #eee;
+  }
+  .records table {
+    margin: 1em 0;
+  }
+  .records th,
+  .records td {
+    padding: 0.2em 0.5em;
+  }
+  .records th {
+    border-bottom: 1px solid #666;
+    word-break: break-word;
+  }
+  .records td {
+    border-bottom: 1px dotted #ccc;
+    word-break: break-word;
+  }
+  .records-count {
+    padding-left: 0.5em;
+    font-weight: bold;
+  }
+  .condition,
+  .query {
+    position: relative;
+    margin: 1em 0;
+    padding: 1em;
+    border: 1px solid #ccc;
+    border-radius: 1em;
+  }
+  .condition table,
+  .query table {
+    width: 100%;
+  }
+  .condition th,
+  .condition td,
+  .query th,
+  .query td {
+    padding: 0.2em 0.5em;
+  }
+  .condition th,
+  .query th {
+    width: 100px;
+  }
+  .condition input[type=text],
+  .query input[type=text] {
+    width: 90%;
+    padding: 0 0.2em;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+  }
+  .condition input[type=checkbox],
+  .query input[type=checkbox] {
+    vertical-align: -2px;
+    margin-right: 0.5em;
+  }
+  .button-condition,
+  .button-query,
+  .button-save  {
+    position: absolute;
+    width: 6em;
+    z-index: 1;
+  }
+  .button-condition,
+  .button-query {
+    top: 1.1em;
+    right: 1em;
+  }
+  .button-save {
+    bottom: -3em;
+    right: 1em;
+    color: #000;
+  }
+  label {
+    font-weight: normal;
+  }
+  code {
+    padding: 2px 4px;
+    font-size: 90%;
+    color: #4a4a4a;
+    background-color: #f7f7f7;
+    border-radius: 10px;
   }
   .template {
     display: none;
@@ -75,13 +179,59 @@
 <body>
 
 <header>
-
   <h1>CSV Base</h1>
-
 </header>
 
 <div class="tables">
   <button class="button button-import">Import</button>
+  <p class="tips" style="display:none">Click to select a table. Shift Key + click to join two tables.</p>
+</div>
+
+<div class="condition" style="display:none">
+  <form>
+    <table>
+      <tr>
+        <th>Join:</th>
+        <td>
+          <input type="text">
+        </td>
+      </tr>
+      <tr>
+          <th></th>
+          <td>Enter a join condition as list of some pairs of left table field and right table field. e.g.<code>[ [ "field1", "field3" ], [ "field2", "field4" ] ]</code></td>
+      </tr>
+      <tr>
+          <th></th>
+          <td><label><input type="checkbox">select unmached records</label></td>
+      </tr>
+    </table>
+  </form>
+  <button class="button button-condition">Apply</button>
+</div>
+
+<div class="query" style="display:none">
+  <form>
+    <table>
+      <tr>
+        <th>Query:</th>
+        <td>
+          <input type="text">
+        </td>
+      </tr>
+      <tr>
+          <th></th>
+          <td>Enter <a href="http://www.taffydb.com/writingqueries" target="syntax">a filter object for Taffy DB.</a> e.g.<code>{ field1: "value1" }</code></td>
+      </tr>
+    </table>
+  </form>
+  <button class="button button-query">Apply</button>
+</div>
+
+<div class="records" style="display:none">
+  <table>
+  </table>
+  <div class="records-count"></div>
+  <button class="button button-save">Save</button>
 </div>
 
 <script type="text/x-template" class="template template-table">
@@ -94,10 +244,16 @@
   </div>
 </script>
 
-<script type="text/x-template" class="template template-records">
-  <table class="records">
-    
-  </table>
+<script type="text/x-template" class="template template-titles">
+  <tr>
+    {FOREACH TITLES}<th>{TITLE}</th>{/FOREACH}
+  </tr>
+</script>
+
+<script type="text/x-template" class="template template-values">
+  <tr>
+    {FOREACH VALUES}<td>{VALUE}</td>{/FOREACH}
+  </tr>
 </script>
 
 <script type="text/javascript" src="js/script.js"></script>
@@ -111,18 +267,124 @@ const PATH = require( "path" );
 Database Class
 */
 var Database = function ( args ) {
-  this.container = args.container;
+
+  this.tablesContainer = args.tablesContainer;
+  this.conditionContainer = args.conditionContainer;
+  this.queryContainer = args.queryContainer;
+  this.recordsContainer = args.recordsContainer;
   this.tables = new Object();
-  this.selectedTables = new Array();
+  this.joins = new Object();
+  this.setConditionForm();
+  this.setQueryForm();
+  this.setSaveButton();
+
 }
 Database.prototype = {
 
+  tablesContainer: null,
+  queryContainer: null,
+  recordsContainer: null,
   tables: null,
-  selectedTables: null,
+  joins: null,
+  selectedTable: null,
+  template: {
+    titles: document.querySelector( ".template-titles" ).innerHTML,
+    values: document.querySelector( ".template-values" ).innerHTML
+  },
+  records: null,
 
-  create: function ( name, data ) {
+  setConditionForm: function () {
 
-    var container = null;
+    var db = this;
+
+    this.conditionContainer.querySelector( ".button-condition" ).addEventListener( "click", function () {
+      var conditions = db.conditionContainer.querySelector( "input[type=text]" ).value;
+      var isReverse = db.conditionContainer.querySelector( "input[type=checkbox]" ).checked;
+      db.selectedTable.setConditions( conditions, isReverse );
+      db.showRecords( db.selectedTable.get() );
+    } );
+
+  },
+
+  initConditionForm: function () {
+    this.conditionContainer.querySelector( "input" ).value = "";
+    this.conditionContainer.style.display = "block";
+  },
+
+  hideConditionForm: function () {
+    this.conditionContainer.querySelector( "input" ).value = "";
+    this.conditionContainer.style.display = "none";
+  },
+
+  setQueryForm: function () {
+
+    var db = this;
+
+    this.queryContainer.querySelector( ".button-query" ).addEventListener( "click", function () {
+      var expr = db.queryContainer.querySelector( "input" ).value;
+      db.showRecords( db.selectedTable.get( expr ) );
+    } );
+
+  },
+
+  initQueryForm: function () {
+    this.queryContainer.querySelector( "input" ).value = "";
+    this.queryContainer.style.display = "block";
+  },
+
+  hideQueryForm: function () {
+    this.queryContainer.querySelector( "input" ).value = "";
+    this.queryContainer.style.display = "none";
+  },
+
+  setSaveButton: function () {
+
+    var db = this;
+
+    this.recordsContainer.querySelector( ".button-save" ).addEventListener( "click", function () {
+      db.saveRecordsAsNewCsv();
+    } );
+
+  },
+
+  initSaveButton: function () {
+    this.recordsContainer.querySelector( ".button-save" ).style.display = "block"
+  },
+
+  hideSaveButton: function () {
+    this.recordsContainer.querySelector( ".button-save" ).style.display = "none"
+  },
+
+  importCsv: function ( path, table ) {
+
+    var db = this;
+
+    window.fileSystem.open( {
+      path: path,
+      success: function ( path, data ) {
+        if ( table ) {
+          table.reset( Papa.parse( data.replace( /[\r\n]+$/, "" ) ).data );
+        }
+        else {
+          db.createTable( path, Papa.parse( data.replace( /[\r\n]+$/, "" ) ).data );
+        }
+      },
+      error: function ( path, data ) {
+        alert( path + " " + data );
+      }
+    } );
+
+  },
+
+  createTable: function ( path, data ) {
+
+    var name = PATH.basename( path ).replace( /\.[^\.]+$/, "" );
+
+    if ( this.tables[ name ] ) {
+      alert( name + " already exist." );
+      return;
+    }
+
     var titles = data.shift();
     var records = new Array();
 
@@ -137,6 +399,7 @@ Database.prototype = {
     }
 
     this.tables[ name ] = new Table( {
+      path: path,
       name: name,
       records: records,
       database: this
@@ -146,16 +409,172 @@ Database.prototype = {
 
   },
 
-  select: function ( table ) {
-    this.showRecords( table.get() );
+  createJoin: function ( left, right ) {
+
+    var name = left.name + "-" + right.name;
+
+    if ( this.joins[ name ] ) {
+      alert( "These tables have already joined." );
+      return;
+    }
+
+    this.joins[ name ] = new Join( {
+      name: name,
+      left: left,
+      right: right,
+      conditions: [],
+      database: this
+    } );
+
+    this.appendTableComponent( this.joins[ name ] );
+
   },
 
   appendTableComponent: function ( table ) {
-    this.container.appendChild( table.makeComponent() );
+    this.tablesContainer.appendChild( table.makeComponent() );
+    this.tablesContainer.querySelector( ".tips" ).style.display = "block";
+  },
+
+  selectTable: function ( table, event ) {
+
+    if ( table.isSelected ) {
+      table.unselect();
+      this.hideQueryForm();
+      this.hideRecords();
+      this.hideSaveButton();
+      this.selectedTable = false;
+    }
+    else {
+
+      if ( this.selectedTable && event.shiftKey ) { // add join
+        this.createJoin( this.selectedTable, table  );
+      }
+      else { // change selected table
+
+        var tableNames = Object.keys( this.tables );
+        for ( var i = 0; i < tableNames.length; i++ ) {
+          this.tables[ tableNames[ i ] ].unselect();
+        }
+        var joinNames = Object.keys( this.joins );
+        for ( var i = 0; i < joinNames.length; i++ ) {
+          this.joins[ joinNames[ i ] ].unselect();
+        }
+
+        table.select();
+        this.selectedTable = table;
+
+        this.initQueryForm();
+        if ( table instanceof Join ) {
+          this.initConditionForm();
+        }
+        else {
+          this.hideConditionForm();
+        }
+
+        this.showRecords( table.get() );
+
+      }
+    }
+
+  },
+
+  initRecords: function () {
+    this.recordsContainer.style.display = "block";
+  },
+
+  hideRecords: function () {
+    this.records = null;
+    this.recordsContainer.style.display = "none";
   },
 
   showRecords: function ( records ) {
-    console.log( records );
+
+    if ( ! records || ! records.length ) {
+      this.hideRecords();
+      return;
+    }
+
+    this.initRecords();
+    this.initSaveButton();
+
+    var db = this;
+    var recordsLines = "";
+
+    // titles line
+    var titlesLine = this.template.titles;
+    var titles = Object.keys( records[ 0 ] );
+    var titlesLoopTemplate = this.template.titles.replace( /^[\s\S]*?{FOREACH TITLES}([\s\S]*?)({TITLE})([\s\S]*?){\/FOREACH}[\s\S]*$/, function ( a, b, c, d ) { return b + c + d }  );
+    var titlesLoop = "";
+    for ( var i = 0; i < titles.length; i++ ) {
+      if ( titles[ i ] != "___id" && titles[ i ] != "___s" ) {
+        titlesLoop += titlesLoopTemplate.replace( /{TITLE}/, titles[ i ] );
+      }
+    }
+    recordsLines += titlesLine.replace( /{FOREACH TITLES}.*{\/FOREACH}/, titlesLoop );
+
+    // values line
+    var valuesLoopTemplate = this.template.values.replace( /^[\s\S]*?{FOREACH VALUES}([\s\S]*?)({VALUE})([\s\S]*?){\/FOREACH}[\s\S]*$/, function ( a, b, c, d ) { return b + c + d }  );
+    for ( var i = 0; i < records.length; i++ ) {
+      ( function () {
+        var valuesLine = db.template.values;
+        var valuesLoop = "";
+        for ( var j = 0; j < titles.length; j++ ) {
+          if ( titles[ j ] != "___id" && titles[ j ] != "___s" ) {
+            valuesLoop += valuesLoopTemplate.replace( /{VALUE}/, records[ i ][ titles[ j ] ] );
+          }
+        }
+        recordsLines += valuesLine.replace( /{FOREACH VALUES}.*{\/FOREACH}/, valuesLoop );
+      } )();
+    }
+
+    this.recordsContainer.querySelector( "table" ).innerHTML = recordsLines;
+    this.recordsContainer.querySelector( ".records-count" ).innerHTML = records.length;
+
+    this.records = records;
+
+  },
+
+  saveRecordsAsNewCsv: function () {
+
+    var db = this;
+
+    if ( ! this.records ) {
+      return;
+    }
+
+    var data = new Array();
+    var titles = Object.keys( this.records[ 0 ] ).filter( function ( title ) {
+      if ( title != "___id" && title != "___s" ) {
+        return true;
+      }
+      return false;
+    } );
+    data.push( titles );
+    for ( var i = 0; i < db.records.length; i++ ) {
+      ( function () {
+
+        var values = new Array();
+        for ( var j = 0; j < titles.length; j++ ) {
+          values.push( db.records[ i ][ titles[ j ] ] );
+        }
+
+        data.push( values );
+
+      } )();
+    }
+
+    window.fileSystem.save( {
+      path: "",
+      content: Papa.unparse( data ),
+      success: function ( path ) {
+        db.importCsv( path );
+      },
+      error: function ( path, data ) {
+        alert( path + " " + data );
+      }
+    } );
+
+
   }
 
 }
@@ -164,19 +583,31 @@ Database.prototype = {
 Table Class
 */
 var Table = function ( args ) {
+  this.path = args.path;
   this.name = args.name;
   this.records = args.records;
-  this.query = TAFFY( this.records );
   this.database = args.database;
+  this.initialize();
 }
 Table.prototype = {
 
+  path: "",
   name : "",
   records: null,
   query: null,
   template: document.querySelector( ".template-table" ).innerHTML,
   database: null,
   component: null,
+  isSelected: false,
+
+  initialize: function () {
+    this.query = TAFFY( this.records );
+  },
+
+  reset: function ( records ) {
+    this.records = records;
+    this.initialize();
+  },
 
   makeComponent: function () {
 
@@ -184,7 +615,7 @@ Table.prototype = {
 
     var tableComponent = this.template.replace( /{NAME}/, this.name )
                                       .replace( /{COUNT}/, this.query().count() );
-    var titlesLoopTemplate = this.template.replace( /^[\s\S]*?{FOREACH TITLES}(<li>{TITLE}<\/li>){\/FOREACH}[\s\S]*$/, function ( a, b ) { return b }  );
+    var titlesLoopTemplate = this.template.replace( /^[\s\S]*?{FOREACH TITLES}([\s\S]*?)({TITLE})([\s\S]*?){\/FOREACH}[\s\S]*$/, function ( a, b, c, d ) { return b + c + d }  );
     var titlesLoop = "";
     var titles = Object.keys( this.records[ 0 ] );
     for ( var i = 0; i < titles.length; i++ ) {
@@ -198,9 +629,8 @@ Table.prototype = {
     this.component.innerHTML = tableComponent;
     this.component.setAttribute( "class", "tableContainer" );
 
-    this.component.querySelector( ".table" ).addEventListener( "click", function () {
-      table.select();
-      table.database.select( table );
+    this.component.querySelector( ".table" ).addEventListener( "click", function ( event ) {
+      table.database.selectTable( table, event );
     } );
 
     return this.component;
@@ -208,11 +638,13 @@ Table.prototype = {
   },
 
   select: function () {
-    this.component.querySelector( ".table" ).setAttribute( "class", "table selected" )
+    this.isSelected = true;
+    this.component.querySelector( ".table" ).setAttribute( "class", "table selected" );
   },
 
   unselect: function () {
-    this.component.querySelector( ".table" ).setAttribute( "class", "table" )
+    this.isSelected = false;
+    this.component.querySelector( ".table" ).setAttribute( "class", "table" );
   },
 
   get: function ( expr ) {
@@ -221,7 +653,158 @@ Table.prototype = {
       return this.query().get();
     }
     else {
-      return this.query( JSON.parse( expr ) ).get();
+      try {
+        eval( "var query = " + expr );
+        return this.query( query ).get();
+      } catch ( e ) {
+        alert( e );
+      }
+    }
+
+  },
+
+  refresh: function () {
+    this.database.importCsv( this.path, this );
+  }
+
+}
+
+/**
+Join Class
+*/
+var Join = function ( args ) {
+
+  this.name = name;
+  this.left = args.left;
+  this.right = args.right;
+  this.conditions = args.conditions;
+  this.isReverse = args.isReverse;
+  this.database = args.database;
+  this.initialize();
+
+}
+Join.prototype = {
+
+  name: "",
+  left: null,
+  right: null,
+  conditions: null,
+  query: null,
+  matchedLeftIds: null,
+  template: document.querySelector( ".template-table" ).innerHTML,
+  database: null,
+  component: null,
+  isSelected: false,
+  isReverse: null,
+
+  initialize: function () {
+
+    var join = this;
+    this.matchedLeftIds = new Object();
+
+    var condition = function ( left, right ) {
+
+      if ( ! join.conditions || ! join.conditions.length ) {
+        return false;
+      }
+
+      var match = true;
+      for ( var i = 0; i < join.conditions.length; i++ ) {
+        if ( left[ join.conditions[ i ][ 0 ] ] !== right[ join.conditions[ i ][ 1 ] ] ) {
+          match = false;
+          break;
+        }
+      }
+      if ( match ) {
+        join.matchedLeftIds[ left.___id ] = true;
+      }
+
+      return match;
+
+    }
+
+    if ( ! this.isReverse ) {
+      this.query = TAFFY( this.left.query().join( this.right.query, condition ).get() );
+    }
+    else {
+      // do join
+      this.left.query().join( this.right.query, condition );
+      // and reverse
+      var unmatchedRecords = new Array();
+      var leftTableRecords = this.left.get();
+      for ( var i = 0; i < leftTableRecords.length; i++ ) {
+          if ( ! this.matchedLeftIds[ leftTableRecords[ i ].___id ] ) {
+            unmatchedRecords.push( leftTableRecords[ i ] );
+          }
+      }
+      this.query = TAFFY( unmatchedRecords );
+    }
+
+
+  },
+
+  makeComponent: function () {
+
+    var join = this;
+
+    var joinComponent = this.template.replace( /{NAME}/, "JOIN" )
+                                     .replace( /{COUNT}/, "" );
+    var titlesLoopTemplate = this.template.replace( /^[\s\S]*?{FOREACH TITLES}([\s\S]*?)({TITLE})([\s\S]*?){\/FOREACH}[\s\S]*$/, function ( a, b, c, d ) { return b + c + d }  );
+    var titlesLoop = "";
+    var titles = [ "left:" + this.left.name, "right:" + this.right.name ];
+    for ( var i = 0; i < titles.length; i++ ) {
+      titlesLoop += titlesLoopTemplate.replace( /{TITLE}/, titles[ i ] );
+    }
+    joinComponent = joinComponent.replace( /{FOREACH TITLES}.*{\/FOREACH}/, titlesLoop );
+
+    this.component = document.createElement( "div" );
+    this.component.innerHTML = joinComponent;
+    this.component.setAttribute( "class", "joinContainer" );
+
+    this.component.querySelector( ".table" ).addEventListener( "click", function ( event ) {
+      join.database.selectTable( join, event );
+    } );
+
+    return this.component;
+
+  },
+
+  select: function () {
+    this.isSelected = true;
+    this.component.querySelector( ".table" ).setAttribute( "class", "table selected" );
+  },
+
+  unselect: function () {
+    this.isSelected = false;
+    this.component.querySelector( ".table" ).setAttribute( "class", "table" );
+  },
+
+  setConditions: function ( expr, isReverse ) {
+
+    try {
+      eval( "var conditions = " + expr );
+    } catch ( e ) {
+      alert( e );
+    }
+    this.conditions = conditions;
+    this.isReverse = isReverse;
+
+    this.initialize();
+
+  },
+
+  get: function ( expr ) {
+
+    if ( ! expr ) {
+      return this.query().get();
+    }
+    else {
+      try {
+        eval( "var query = " + expr );
+      } catch ( e ) {
+        alert( e );
+      }
+      return this.query( query ).get();
     }
 
   }
@@ -229,23 +812,6 @@ Table.prototype = {
 }
 
 
-/**
-Global Commands
-*/
-
-var importCsv = function () {
-
-  window.fileSystem.open( {
-    path: "",
-    success: function ( path, data ) {
-      window.db.create( PATH.basename( path ).replace( /\.[^\.]+$/, "" ), Papa.parse( data ).data );
-    },
-    error: function ( path, data ) {
-      alert( path + " " + data );
-    }
-  } );
-
-}
 
 var db;
 
@@ -254,12 +820,15 @@ window.onFoul = function () {
   Script( "js/papaparse.min.js", null, "var module = undefined;" );
   Script( "js/taffy-min.js", null, null, "window.TAFFY = TAFFY;" );
 
-  document.querySelector( ".button-import" ).addEventListener( "click", function () {
-    window.importCsv();
+  window.db = new Database( {
+    tablesContainer: document.querySelector( ".tables" ),
+    conditionContainer: document.querySelector( ".condition" ),
+    queryContainer: document.querySelector( ".query" ),
+    recordsContainer: document.querySelector( ".records" )
   } );
 
-  window.db = new Database( {
-    container: document.querySelector( ".tables" )
+  document.querySelector( ".button-import" ).addEventListener( "click", function () {
+    window.db.importCsv();
   } );
 
 }
