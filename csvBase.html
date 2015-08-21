@@ -2,8 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>Markdown Editor</title>
+<title>CSV Base</title>
 <link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/ActivityIndicator.css">
 <style>
   body {
     padding: 1em;
@@ -19,12 +20,12 @@
   .tableContainer {
     display: inline-block;
     margin-right: 1em;
-    margin-bottom: 1em;
+    padding-bottom: 2em;
   }
   .joinContainer {
     display: inline-block;
     margin-right: 1em;
-    margin-bottom: 1em;
+    padding-bottom: 2em;
   }
   .tables .table {
     position: relative;
@@ -46,6 +47,10 @@
   }
   .tables .table.selected {
     background-color: #F5F3CB;
+  }
+  .tables .table.refresh {
+    color: #fff;
+    background-color: #2ea2dc;
   }
   .table-name {
     margin: 0;
@@ -76,6 +81,23 @@
     background-color: #2ea2dc;
     color: #fff;
     font-size: 80%;
+  }
+  .table-icon {
+    position: absolute;
+    bottom: -20px;
+    width: 16px;
+    height: 16px;
+    background-color: #333;
+    border-radius: 16px;
+    background-size: cover;
+  }
+  .table-icon-refresh {
+    left: 0;
+    background-image: url( "css/img/ic_refresh_white_48dp.png" );
+  }
+  .table-icon-remove {
+    right: 0;
+    background-image: url( "css/img/ic_close_white_48dp.png" );
   }
   .button-import {
     position: absolute;
@@ -175,7 +197,7 @@
     display: none;
   }
 </style>
-<head>
+</head>
 <body>
 
 <header>
@@ -234,6 +256,10 @@
   <button class="button button-save">Save</button>
 </div>
 
+<div class="globalSpinner-container" style="display:none">
+  <img class="globalSpinner-spinner" src="css/img/ActivityIndicator.png" style="-webkit-animation-name: dashcode-activity-indicator; -webkit-animation-duration: 1s; -webkit-animation-iteration-count: infinite; -webkit-animation-timing-function: linear;" />
+</div>
+
 <script type="text/x-template" class="template template-table">
   <div class="table">
     <h3 class="table-name">{NAME}</h3>
@@ -241,6 +267,8 @@
     {FOREACH TITLES}<li>{TITLE}</li>{/FOREACH}
     </ul>
     <div class="table-count">{COUNT}</div>
+    <div class="table-icon table-icon-refresh" style="display:none"></div>
+    <div class="table-icon table-icon-remove" style="display:none"></div>
   </div>
 </script>
 
@@ -300,15 +328,26 @@ Database.prototype = {
     this.conditionContainer.querySelector( ".button-condition" ).addEventListener( "click", function () {
       var conditions = db.conditionContainer.querySelector( "input[type=text]" ).value;
       var isReverse = db.conditionContainer.querySelector( "input[type=checkbox]" ).checked;
-      db.selectedTable.setConditions( conditions, isReverse );
-      db.showRecords( db.selectedTable.get() );
+      window.globalSpinner.start();
+      setTimeout( function () {
+        db.selectedTable.setConditions( conditions, isReverse );
+        db.showRecords( db.selectedTable.get() );
+        window.globalSpinner.stop();
+      }, 500 );
     } );
 
   },
 
   initConditionForm: function () {
-    this.conditionContainer.querySelector( "input" ).value = "";
+    this.conditionContainer.querySelector( "input[type=text]" ).value = "";
+    this.conditionContainer.querySelector( "input[type=checkbox]" ).checked = false;
     this.conditionContainer.style.display = "block";
+    if ( this.selectedTable && this.selectedTable.lastConditionExpr ) {
+      this.conditionContainer.querySelector( "input" ).value = this.selectedTable.lastConditionExpr;
+      if ( this.selectedTable.isReverse ) {
+        this.conditionContainer.querySelector( "input[type=checkbox]" ).checked = true;
+      }
+    }
   },
 
   hideConditionForm: function () {
@@ -322,7 +361,11 @@ Database.prototype = {
 
     this.queryContainer.querySelector( ".button-query" ).addEventListener( "click", function () {
       var expr = db.queryContainer.querySelector( "input" ).value;
-      db.showRecords( db.selectedTable.get( expr ) );
+      window.globalSpinner.start();
+      setTimeout( function () {
+        db.showRecords( db.selectedTable.get( expr ) );
+        window.globalSpinner.stop();
+      }, 500 );
     } );
 
   },
@@ -330,6 +373,9 @@ Database.prototype = {
   initQueryForm: function () {
     this.queryContainer.querySelector( "input" ).value = "";
     this.queryContainer.style.display = "block";
+    if ( this.selectedTable && this.selectedTable.lastQueryExpr ) {
+      this.queryContainer.querySelector( "input" ).value = this.selectedTable.lastQueryExpr;
+    }
   },
 
   hideQueryForm: function () {
@@ -357,6 +403,8 @@ Database.prototype = {
 
   importCsv: function ( path, table ) {
 
+    window.globalSpinner.start();
+
     var db = this;
 
     window.fileSystem.open( {
@@ -364,13 +412,18 @@ Database.prototype = {
       success: function ( path, data ) {
         if ( table ) {
           table.reset( Papa.parse( data.replace( /[\r\n]+$/, "" ) ).data );
+          if ( db.selectedTable == table ) {
+              db.showRecords( table.get() );
+          }
         }
         else {
           db.createTable( path, Papa.parse( data.replace( /[\r\n]+$/, "" ) ).data );
         }
+        window.globalSpinner.stop();
       },
       error: function ( path, data ) {
         alert( path + " " + data );
+        window.globalSpinner.stop();
       }
     } );
 
@@ -409,6 +462,18 @@ Database.prototype = {
 
   },
 
+  removeTable: function ( table ) {
+    if ( this.selectedTable == table ) {
+      this.unselectTable();
+    }
+    this.tablesContainer.removeChild( table.component );
+    delete this.tables[ table.name ];
+    delete table;
+    if ( Object.keys( this.tables ).length == 0 ) {
+      this.tablesContainer.querySelector( ".tips" ).style.display = "none";
+    }
+  },
+
   createJoin: function ( left, right ) {
 
     var name = left.name + "-" + right.name;
@@ -430,6 +495,28 @@ Database.prototype = {
 
   },
 
+  removeJoin: function ( join ) {
+    if ( this.selectedTable == join ) {
+      this.unselectTable();
+    }
+    this.tablesContainer.removeChild( join.component );
+    delete this.joins[ join.name ];
+    delete join;
+  },
+
+  isIncludedInJoin: function ( table ) {
+    var db = this;
+    var joinNames = Object.keys( this.joins );
+    var status = false;
+    for ( var i = 0; i < joinNames.length; i++ ) {
+      if ( db.joins[ joinNames[ i ] ].left == table || db.joins[ joinNames[ i ] ].right == table ) {
+        status = true;
+        break;
+      }
+    }
+    return status;
+  },
+
   appendTableComponent: function ( table ) {
     this.tablesContainer.appendChild( table.makeComponent() );
     this.tablesContainer.querySelector( ".tips" ).style.display = "block";
@@ -438,16 +525,18 @@ Database.prototype = {
   selectTable: function ( table, event ) {
 
     if ( table.isSelected ) {
-      table.unselect();
-      this.hideQueryForm();
-      this.hideRecords();
-      this.hideSaveButton();
-      this.selectedTable = false;
+      this.unselectTable();
     }
     else {
 
       if ( this.selectedTable && event.shiftKey ) { // add join
+
+        if ( table instanceof Join ) {
+          return;
+        }
+
         this.createJoin( this.selectedTable, table  );
+
       }
       else { // change selected table
 
@@ -471,11 +560,21 @@ Database.prototype = {
           this.hideConditionForm();
         }
 
-        this.showRecords( table.get() );
+        this.showRecords( table.get( table.lastQueryExpr ) );
 
       }
+
     }
 
+  },
+
+  unselectTable: function () {
+      this.hideConditionForm();
+      this.hideQueryForm();
+      this.hideRecords();
+      this.hideSaveButton();
+      this.selectedTable.unselect();
+      this.selectedTable = null;
   },
 
   initRecords: function () {
@@ -574,7 +673,6 @@ Database.prototype = {
       }
     } );
 
-
   }
 
 }
@@ -599,14 +697,28 @@ Table.prototype = {
   database: null,
   component: null,
   isSelected: false,
+  lastQueryExpr: "",
 
   initialize: function () {
     this.query = TAFFY( this.records );
   },
 
   reset: function ( records ) {
+
+    var table = this;
+
     this.records = records;
     this.initialize();
+
+    this.component.querySelector( ".table-count" ).innerHTML = this.query().count();
+
+    setTimeout( function () {
+      table.component.querySelector( ".table" ).setAttribute( "class", table.component.querySelector( ".table" ).getAttribute( "class" ).replace( /refresh/, "" ).replace( / +/, " " ).replace( / $/, "" ) );
+      setTimeout( function () {
+        table.component.querySelector( ".table" ).style.transition = "none";
+      }, 1000 );
+    }, 1000 );
+
   },
 
   makeComponent: function () {
@@ -630,7 +742,37 @@ Table.prototype = {
     this.component.setAttribute( "class", "tableContainer" );
 
     this.component.querySelector( ".table" ).addEventListener( "click", function ( event ) {
-      table.database.selectTable( table, event );
+      window.globalSpinner.start();
+      setTimeout( function () {
+        table.database.selectTable( table, event );
+        window.globalSpinner.stop();
+      }, 500 );
+    } );
+
+    this.component.addEventListener( "mouseenter", function () {
+      var icons = table.component.querySelectorAll( ".table-icon" );
+      for ( var i = 0; i < icons.length; i++ ) {
+        icons[ i ].style.display = "block";
+      }
+    } );
+
+    this.component.addEventListener( "mouseleave", function () {
+      var icons = table.component.querySelectorAll( ".table-icon" );
+      for ( var i = 0; i < icons.length; i++ ) {
+        icons[ i ].style.display = "none";
+      }
+    } );
+
+    this.component.querySelector( ".table-icon-refresh" ).addEventListener( "click", function ( event ) {
+      event.preventDefault();
+      event.stopPropagation();
+      table.refresh();
+    } );
+
+    this.component.querySelector( ".table-icon-remove" ).addEventListener( "click", function ( event ) {
+      event.preventDefault();
+      event.stopPropagation();
+      table.remove();
     } );
 
     return this.component;
@@ -650,11 +792,12 @@ Table.prototype = {
   get: function ( expr ) {
 
     if ( ! expr ) {
-      return this.query().get();
+        return this.query().get();
     }
     else {
+      this.lastQueryExpr = expr;
       try {
-        eval( "var query = " + expr );
+        eval( "var query = " + this.lastQueryExpr );
         return this.query( query ).get();
       } catch ( e ) {
         alert( e );
@@ -664,7 +807,24 @@ Table.prototype = {
   },
 
   refresh: function () {
+
+    this.component.querySelector( ".table" ).style.transition = "background-color 1s linear,color 1s linear";
+    this.component.querySelector( ".table" ).setAttribute( "class" , this.component.querySelector( ".table" ).getAttribute( "class" ) + " refresh" );
     this.database.importCsv( this.path, this );
+
+  },
+
+  remove: function () {
+
+    if ( this.database.isIncludedInJoin( this ) ) {
+      alert( 'Can not remove. "' + this.name + '" is included in any joins.' );
+      return;
+    }
+
+    if ( confirm( 'Remove "' + this.name + '"?' ) ) {
+      this.database.removeTable( this );
+    }
+
   }
 
 }
@@ -674,10 +834,9 @@ Join Class
 */
 var Join = function ( args ) {
 
-  this.name = name;
+  this.name = args.name;
   this.left = args.left;
   this.right = args.right;
-  this.conditions = args.conditions;
   this.isReverse = args.isReverse;
   this.database = args.database;
   this.initialize();
@@ -696,14 +855,18 @@ Join.prototype = {
   component: null,
   isSelected: false,
   isReverse: null,
+  lastConditionExpr: "",
+  lastQueryExpr: "",
 
   initialize: function () {
 
     var join = this;
     this.matchedLeftIds = new Object();
 
-    var condition = function ( left, right ) {
+    var counter = 0;
 
+    var condition = function ( left, right ) {
+console.log( counter++ );
       if ( ! join.conditions || ! join.conditions.length ) {
         return false;
       }
@@ -762,7 +925,37 @@ Join.prototype = {
     this.component.setAttribute( "class", "joinContainer" );
 
     this.component.querySelector( ".table" ).addEventListener( "click", function ( event ) {
-      join.database.selectTable( join, event );
+      window.globalSpinner.start();
+      setTimeout( function () {
+        join.database.selectTable( join, event );
+        window.globalSpinner.stop();
+      }, 500 );
+    } );
+
+    this.component.addEventListener( "mouseenter", function () {
+      var icons = join.component.querySelectorAll( ".table-icon" );
+      for ( var i = 0; i < icons.length; i++ ) {
+        icons[ i ].style.display = "block";
+      }
+    } );
+
+    this.component.addEventListener( "mouseleave", function () {
+      var icons = join.component.querySelectorAll( ".table-icon" );
+      for ( var i = 0; i < icons.length; i++ ) {
+        icons[ i ].style.display = "none";
+      }
+    } );
+
+    this.component.querySelector( ".table-icon-refresh" ).addEventListener( "click", function ( event ) {
+      event.preventDefault();
+      event.stopPropagation();
+      join.refresh();
+    } );
+
+    this.component.querySelector( ".table-icon-remove" ).addEventListener( "click", function ( event ) {
+      event.preventDefault();
+      event.stopPropagation();
+      join.remove();
     } );
 
     return this.component;
@@ -781,6 +974,7 @@ Join.prototype = {
 
   setConditions: function ( expr, isReverse ) {
 
+    this.lastConditionExpr = expr;
     try {
       eval( "var conditions = " + expr );
     } catch ( e ) {
@@ -799,21 +993,82 @@ Join.prototype = {
       return this.query().get();
     }
     else {
+      this.lastQueryExpr = expr;
       try {
-        eval( "var query = " + expr );
+        eval( "var query = " + this.lastQueryExpr );
+        return this.query( query ).get();
       } catch ( e ) {
         alert( e );
       }
-      return this.query( query ).get();
     }
 
+  },
+
+  refresh: function () {
+
+    var join = this;
+
+    this.component.querySelector( ".table" ).style.transition = "background-color 1s linear,color 1s linear";
+    this.component.querySelector( ".table" ).setAttribute( "class" , this.component.querySelector( ".table" ).getAttribute( "class" ) + " refresh" );
+
+    this.initialize();
+
+    if ( this.isSelected ) {
+      this.database.showRecords( this.get() );
+    }
+
+    setTimeout( function () {
+      join.component.querySelector( ".table" ).setAttribute( "class", join.component.querySelector( ".table" ).getAttribute( "class" ).replace( /refresh/, "" ).replace( / +/, " " ).replace( / $/, "" ) );
+      setTimeout( function () {
+        join.component.querySelector( ".table" ).style.transition = "none";
+      }, 1000 );
+    }, 1000 );
+
+  },
+
+  remove: function () {
+    if ( confirm( 'Remove "' + this.name + '"?' ) ) {
+      this.database.removeJoin( this );
+    }
+  },
+
+}
+
+/**
+Global Spinner Class
+*/
+var GlobalSpinner = function ( container ) {
+  this.container = container;
+  this.container.style.position = "absolute";
+  this.container.style.top = 0;
+  this.container.style.left = 0;
+  this.container.style.backgroundColor = "rgba( 255, 255, 255, 0.5 )";
+  this.container.style.width = "100%";
+  this.container.style.height = "100%";
+  this.container.style.zIndex = 1;
+  this.container.querySelector( ".globalSpinner-spinner" ).style.position = "absolute";
+  this.spinner = this.container.querySelector( ".globalSpinner-spinner" );
+}
+GlobalSpinner.prototype = {
+
+  container: null,
+  spinner: null,
+
+  start: function () {
+    this.spinner.style.top = window.innerHeight / 2 - this.spinner.clientHeight / 2 + "px";
+    this.spinner.style.left = window.innerWidth / 2 - this.spinner.clientWidth / 2 + "px";
+    this.container.style.display = "block";
+  },
+
+  stop: function () {
+    this.container.style.display = "none";
   }
 
 }
 
-
-
+// database
 var db;
+var globalSpinner;
 
 window.onFoul = function () {
 
@@ -826,6 +1081,8 @@ window.onFoul = function () {
     queryContainer: document.querySelector( ".query" ),
     recordsContainer: document.querySelector( ".records" )
   } );
+
+  window.globalSpinner = new GlobalSpinner( document.querySelector( ".globalSpinner-container" ) );
 
   document.querySelector( ".button-import" ).addEventListener( "click", function () {
     window.db.importCsv();
