@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CSV Base</title>
+<link rel="alternate" type="application/atom+xml" href="http://takahashihideki-git.github.io/FoulPlay/doc/feed.xml" title="Foul Play" />
+<link rel="stylesheet" href="../css/bootstrap.min.css"> 
+<link rel="stylesheet" href="css/style.css"> 
+</head>
+<body>
+	<header>
+		<h1>Foul Play</h1>
+		<a href="index.html"><div class="icon icon-index"><span class="icon-label">index</span></div></a>
+	</header>
+	<div class="container article">
+    <div class="pubdate">2015-08-23 22:10</div>
+		<h1 id="csv-base">CSV Base</h1>
+<p>CSV Base は、ローカルディスクに保存されている CSV ファイルを読み込んで、データベースのようにデータを抽出したり、合成したりするためのアプリです。</p>
+<p><img src="img/csvBase.png" style="display:block;width:60%;margin:2em auto"></p>
+<h2 id="-">使い方</h2>
+<h3 id="foul-">Foul にショートカットを登録</h3>
+<p>下記の URL を <a href="https://github.com/takahashihideki-git/Foul">Foul</a> のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。</p>
+<p><a href="http://takahashihideki-git.github.io/FoulPlay/csvBase.html">http://takahashihideki-git.github.io/FoulPlay/csvBase.html</a></p>
+<p>その後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、CSV Base に CSVファイルを読み込めるようになります。</p>
+<h3 id="csv-">CSVファイルを読み込む</h3>
+<p>「Import」ボタンをクリックすると、ファイル選択ダイアログが開きます。CSV ファイル（文字コードは UTF8 のみに対応しています）を選択すると、読み込まれた CSV ファイルに対応するテーブルオブジェクトが画面上に作成されます。</p>
+<p>テーブルオブジェクトには、ファイル名とカラム名（1行目をカラム名指定行とみなします）の一覧が表示されています。</p>
+<p>テーブルオブジェクトをクリックすると、CSVファイルに含まれている全レコードが表示されます。</p>
+<p>もう一度クリックすると、レコードは非表示になります。</p>
+<h3 id="csv-">CSVファイルを再読み込みする</h3>
+<p>テーブルオブジェクトにマウスを合わせると、テーブルオブジェクトの左下に、「再読み込み（回転矢印）」アイコンが表示されます。</p>
+<p>「リロード」アイコンをクリックすると、テーブルオブジェクトに対応する CSV ファイルの最新の内容を読み込みます。</p>
+<h3 id="-">テーブルオブジェクトを削除する</h3>
+<p>テーブルオブジェクトにマウスを合わせると、テーブルオブジェクトの左下に、「削除（×印）」アイコンが表示されます。</p>
+<p>「削除」アイコンをクリックすると、テーブルオブジェクトが画面上から削除されます。</p>
+<h3 id="-">クエリーを指定して、条件に合致するレコードを抽出する</h3>
+<p>「Query」欄に、抽出条件を表現する Javascript コードを入力して、「Apply」ボタンをクリックすると、指定された条件に合致するレコードが表示されます。</p>
+<p>CSV Base は、データベースエンジンに <a href="http://www.taffydb.com/">Taffy DB</a> を使用しています。抽出条件は、Taffy DB の 「Filter Object」を記述して指定します。</p>
+<p>たとえば、カラム &quot;column1&quot; の値が &quot;foo&quot; であるレコードを抽出するには、</p>
+<pre><code>{ column1: &quot;foo&quot; }
+</code></pre><p>と入力します。</p>
+<p>あるいは、カラム &quot;price&quot; の値が 1500 以上であるレコードを抽出するには、</p>
+<pre><code>{ price: { &quot;&gt;&quot;: 1500 } }
+</code></pre><p>と入力します。</p>
+<p>また、カラム &quot;column1&quot; の値が &quot;foo&quot; で、かつ、カラム &quot;column2&quot; の値が &quot;bar&quot; であるレコードを抽出するには、</p>
+<pre><code>{ column1: &quot;foo&quot;, column2: &quot;bar&quot; }
+</code></pre><p>と入力します。</p>
+<p>そのほか、文字列の部分一致、前方一致、後方一致、正規表現マッチ なども指定できます。くわしくは、Taffy DB の<a href="http://www.taffydb.com/writingqueries">ドキュメント</a>でご確認ください。</p>
+<h3 id="-">レコードの並び順を指定する</h3>
+<p>抽出されたレコードの並び順を指定するには、「Order」 欄に、並び順の基準となるカラム名のリストを Javascript の配列として入力して「Apply」ボタンをクリックします。</p>
+<p>カラム &quot;column1&quot;　の値を基準に並べるには、</p>
+<pre><code>[ &quot;column1&quot; ]
+</code></pre><p>と入力します。</p>
+<p>複数のカラムを指定することもできます。たとえば、まずカラム &quot;column1&quot;　の値を基準に並べ、&quot;column1&quot; の値が同じレコードの一群について、&quot;column2&quot; の値を基準に並べるには、</p>
+<pre><code>[ &quot;column1&quot;, &quot;column2&quot; ]
+</code></pre><p> と入力します。</p>
+<p> 配列の要素には、カラム名に加えて、昇順か降順かを指定するためのキーワードを指定することもできます。昇順のキーワードは &quot;asc&quot;、降順のキーワードは &quot;desc&quot; です。値を数値として評価したい場合は、昇順を &quot;logical&quot;、降順を &quot;logicaldesc&quot; と指定します。</p>
+<pre><code>[ &quot;column1 asc&quot;, &quot;column2 logicaldesc&quot; ]
+</code></pre><h3 id="-">重複するレコードをまとめて表示する</h3>
+<p>指定したカラムの値について、重複している複数のレコードを1レコードにまとめて表示するには、Distinct 欄にカラム名のリストを Javascript の配列として入力して「Apply」ボタンをクリックします。</p>
+<h3 id="-">二つのテーブルを結合して表示する</h3>
+<p>あるテーブルオブジェクトをクリックして選択してから、Shiftキーを押しながら別のテーブルオブジェクトをクリックすると、これら2つのテーブルを結合したジョインオブジェクトが画面上に作成されます。</p>
+<p>ジョインオブジェクトでは、作成時、先に選択されていたテーブルオブジェクトを「左テーブル」、後から Shiftキーを押しながら選択したテーブルオブジェクトを「右テーブル」とみなします。</p>
+<p>ジョインオブジェクトをクリックして選択すると、初期状態では、左テーブルの全レコードを表示します。</p>
+<p>「Join」欄に、結合の基準となる左テーブルと右テーブルのカラム名のペアのリストを Javascriptの配列の配列として入力して「Apply」ボタンをクリックすると、指定されたカラムの値が同じ両テーブルのレコードを結合して表示します。
+反対側のテーブルに一致するレコードが存在しなかったレコードは表示されません。SQL で Inner Join / 内部結合 と呼ばれる結合方法です。</p>
+<p>「select unmached records」項目をチェックすると、左テーブルのレコードのうち、右テーブルに一致するレコードを持たないレコードのみが表示されます。Microsoft Access の「不一致クエリ」で得られる結果と同じです。</p>
+<h3 id="-csv-">表示しているレコードを別のCSVファイルとして保存する</h3>
+<p>レコード一覧の下にある「Save」ボタンをクリックすると、現在表示されているレコードを別のCSVファイルとして保存することができます。保存後、自動的に読み込まれて、対応するテーブルオブジェクトが画面上に作成されます。</p>
+
+		<a href="index.html"><div class="icon icon-index icon-index-bottom"><span class="icon-label">index</span></div></a>
+	</div>
+	<footer>&copy; <a href="https://github.com/takahashihideki-git">takahashihideki</a></footer>
+</body>
+</html>

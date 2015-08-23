@@ -5,17 +5,26 @@
     <description><![CDATA[SPAs on Foul]]></description>
     <link>http://takahashihideki-git.github.io/FoulPlay/doc/index.html</link>
     <generator>RSS for Node</generator>
-    <lastBuildDate>Tue, 04 Aug 2015 04:24:49 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 23 Aug 2015 13:12:12 GMT</lastBuildDate>
     <atom:link href="http://takahashihideki-git.github.io/FoulPlay/doc/rss.xml" rel="self" type="application/rss+xml"/>
     <author><![CDATA[takahashihideki]]></author>
     <copyright><![CDATA[takahashihideki]]></copyright>
+    <item>
+      <title><![CDATA[CSV Base]]></title>
+      <description><![CDATA[CSV Base は、ローカルディスクに保存されている CSV ファイルを読み込んで、データベースのようにデータを抽出したり、合成したりするためのアプリです。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/csvBase.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、CSV Base に CSVファイルを読み込めるようになります。「Import」ボタンをクリックすると、ファイル選択ダイアログが開きます。CSV ファイル（文字コードは UTF8 のみに対応しています）を選択すると、読み込まれた CSV ファイルに対応するテーブルオブジェクトが画面上に作]]></description>
+      <link>http://takahashihideki-git.github.io/FoulPlay/doc/csvBase.html</link>
+      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/csvBase.html</guid>
+      <dc:creator><![CDATA[takahashihideki]]></dc:creator>
+      <pubDate>Sun, 23 Aug 2015 13:10:21 GMT</pubDate>
+      <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/csvBase.png</image>
+    </item>
     <item>
       <title><![CDATA[Simple Http Server]]></title>
       <description><![CDATA[Simple Http Server は、簡易的な Local Network (LAN) HTTP サーバーとして動作するアプリです。ローカルファイルシステムの任意のフォルダをドキュメントルートに指定することができます。また、サーバーの起動中、いつでもドキュメントルートを別のフォルダに切り替えることができます。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/simpleHttpServer.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、Local Network HTTPサーバーが起動します。HTTPサーバーが起動すると、「host」欄に、IPアド]]></description>
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/simpleHttpServer.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/simpleHttpServer.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Tue, 04 Aug 2015 04:18:33 GMT</pubDate>
+      <pubDate>Sun, 23 Aug 2015 13:08:35 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/simpleHttpServer.png</image>
     </item>
     <item>
@@ -24,7 +33,7 @@
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Mon, 27 Jul 2015 12:38:44 GMT</pubDate>
+      <pubDate>Mon, 27 Jul 2015 17:47:36 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/diffTwoUrls.png</image>
     </item>
     <item>
@@ -33,7 +42,7 @@
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/markdownEditor.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/markdownEditor.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Tue, 21 Jul 2015 06:29:09 GMT</pubDate>
+      <pubDate>Sat, 18 Jul 2015 13:15:37 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/markdownEditor.png</image>
     </item>
     <item>
@@ -42,7 +51,7 @@
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/pipeline.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/pipeline.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Fri, 17 Jul 2015 05:57:57 GMT</pubDate>
+      <pubDate>Sat, 18 Jul 2015 12:26:58 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/pipeline2.png</image>
     </item>
   </channel>
