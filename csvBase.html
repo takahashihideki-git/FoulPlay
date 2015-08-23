@@ -8,6 +8,8 @@
 <style>
   body {
     padding: 1em;
+    padding-bottom: 2em;
+    margin-bottom: 3em;
   }
   .tables {
     position: relative;
@@ -113,7 +115,13 @@
     border-radius: 1em;
     color: #eee;
   }
+  .records-scroller {
+    max-height: 200px;
+    margin-bottom: 1em;
+    overflow-y: scroll;
+  }
   .records table {
+    width: 100%;  
     margin: 1em 0;
   }
   .records th,
@@ -220,7 +228,7 @@
       </tr>
       <tr>
           <th></th>
-          <td>Enter a join condition as list of some pairs of left table field and right table field. e.g.<code>[ [ "field1", "field3" ], [ "field2", "field4" ] ]</code></td>
+          <td>Enter a join condition as list of some pairs of left table column and right table column. e.g.<code>[ [ "column1", "column3" ], [ "column2", "column4" ] ]</code></td>
       </tr>
       <tr>
           <th></th>
@@ -237,12 +245,30 @@
       <tr>
         <th>Query:</th>
         <td>
-          <input type="text">
+          <input name="query" type="text">
         </td>
       </tr>
       <tr>
           <th></th>
-          <td>Enter <a href="http://www.taffydb.com/writingqueries" target="syntax">a filter object for Taffy DB.</a> e.g.<code>{ field1: "value1" }</code></td>
+          <td>Enter <a href="http://www.taffydb.com/writingqueries" target="syntax">a filter object for Taffy DB.</a> e.g.<code>{ column1: "value1" }</code> <code>{ column1: { ">": 100 } }</code> <code>{  column1: { like: "foo" }}</code></td>
+      </tr>
+      <tr>
+        <th>Order:</th>
+        <td>
+          <input name="order" type="text">
+        </td>
+      </tr>
+      <tr>
+        <th></th>
+        <td>Enter a list of columns to order by. e.g. <code>["column"]</code> <code>["column1", "column2"]</code><code>["fieldname1 asc", "fieldname2 desc"]</code></td> 
+      </tr>
+      <tr>
+        <th>Distinct:</th>
+        <td><input name="distinct" type="text"></td>
+      </tr>
+      <tr>
+        <th></th>
+        <td>Enter a list of columns of distinct value. e.g. <code>["column1"]</code> <code>["column1","column2"]</code></td>
       </tr>
     </table>
   </form>
@@ -250,8 +276,14 @@
 </div>
 
 <div class="records" style="display:none">
-  <table>
-  </table>
+  <div class="records-scroller">
+    <table>
+      <thead>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
   <div class="records-count"></div>
   <button class="button button-save">Save</button>
 </div>
@@ -331,7 +363,7 @@ Database.prototype = {
       window.globalSpinner.start();
       setTimeout( function () {
         db.selectedTable.setConditions( conditions, isReverse );
-        db.showRecords( db.selectedTable.get() );
+        db.showRecords( db.selectedTable.get( db.selectedTable.lastQuery.expr, db.selectedTable.lastQuery.order, db.selectedTable.lastQuery.distinct ) );
         window.globalSpinner.stop();
       }, 500 );
     } );
@@ -360,10 +392,12 @@ Database.prototype = {
     var db = this;
 
     this.queryContainer.querySelector( ".button-query" ).addEventListener( "click", function () {
-      var expr = db.queryContainer.querySelector( "input" ).value;
+      var expr = db.queryContainer.querySelector( "input[name=query]" ).value;
+      var order = db.queryContainer.querySelector( "input[name=order]" ).value;
+      var distinct = db.queryContainer.querySelector( "input[name=distinct]" ).value;
       window.globalSpinner.start();
       setTimeout( function () {
-        db.showRecords( db.selectedTable.get( expr ) );
+        db.showRecords( db.selectedTable.get( expr, order, distinct ) );
         window.globalSpinner.stop();
       }, 500 );
     } );
@@ -373,8 +407,10 @@ Database.prototype = {
   initQueryForm: function () {
     this.queryContainer.querySelector( "input" ).value = "";
     this.queryContainer.style.display = "block";
-    if ( this.selectedTable && this.selectedTable.lastQueryExpr ) {
-      this.queryContainer.querySelector( "input" ).value = this.selectedTable.lastQueryExpr;
+    if ( this.selectedTable && this.selectedTable.lastQuery ) {
+      this.queryContainer.querySelector( "input[name=query]" ).value = this.selectedTable.lastQuery.expr;
+      this.queryContainer.querySelector( "input[name=order]" ).value = this.selectedTable.lastQuery.order;
+      this.queryContainer.querySelector( "input[name=distinct]" ).value = this.selectedTable.lastQuery.distinct;
     }
   },
 
@@ -403,17 +439,20 @@ Database.prototype = {
 
   importCsv: function ( path, table ) {
 
-    window.globalSpinner.start();
-
     var db = this;
+
+    if ( path ) {
+      window.globalSpinner.start();
+    }
 
     window.fileSystem.open( {
       path: path,
       success: function ( path, data ) {
+        window.globalSpinner.start();
         if ( table ) {
           table.reset( Papa.parse( data.replace( /[\r\n]+$/, "" ) ).data );
           if ( db.selectedTable == table ) {
-              db.showRecords( table.get() );
+              db.showRecords( table.get( table.lastQuery.expr, table.lastQuery.order, table.lastQuery.distinct ) );
           }
         }
         else {
@@ -560,7 +599,7 @@ Database.prototype = {
           this.hideConditionForm();
         }
 
-        this.showRecords( table.get( table.lastQueryExpr ) );
+        this.showRecords( table.get( table.lastQuery.expr, table.lastQuery.order, table.lastQuery.distinct ) );
 
       }
 
@@ -597,7 +636,6 @@ Database.prototype = {
     this.initSaveButton();
 
     var db = this;
-    var recordsLines = "";
 
     // titles line
     var titlesLine = this.template.titles;
@@ -605,20 +643,21 @@ Database.prototype = {
     var titlesLoopTemplate = this.template.titles.replace( /^[\s\S]*?{FOREACH TITLES}([\s\S]*?)({TITLE})([\s\S]*?){\/FOREACH}[\s\S]*$/, function ( a, b, c, d ) { return b + c + d }  );
     var titlesLoop = "";
     for ( var i = 0; i < titles.length; i++ ) {
-      if ( titles[ i ] != "___id" && titles[ i ] != "___s" ) {
+      if ( titles[ i ] != "___id" && titles[ i ] != "___s" && titles[ i ] != "___id_R" && titles[ i ] != "___s_R" ) {
         titlesLoop += titlesLoopTemplate.replace( /{TITLE}/, titles[ i ] );
       }
     }
-    recordsLines += titlesLine.replace( /{FOREACH TITLES}.*{\/FOREACH}/, titlesLoop );
+    this.recordsContainer.querySelector( "table thead" ).innerHTML = titlesLine.replace( /{FOREACH TITLES}.*{\/FOREACH}/, titlesLoop );
 
     // values line
+    var recordsLines = "";
     var valuesLoopTemplate = this.template.values.replace( /^[\s\S]*?{FOREACH VALUES}([\s\S]*?)({VALUE})([\s\S]*?){\/FOREACH}[\s\S]*$/, function ( a, b, c, d ) { return b + c + d }  );
     for ( var i = 0; i < records.length; i++ ) {
       ( function () {
         var valuesLine = db.template.values;
         var valuesLoop = "";
         for ( var j = 0; j < titles.length; j++ ) {
-          if ( titles[ j ] != "___id" && titles[ j ] != "___s" ) {
+          if ( titles[ j ] != "___id" && titles[ j ] != "___s" && titles[ j ] != "___id_R" && titles[ j ] != "___s_R" ) {
             valuesLoop += valuesLoopTemplate.replace( /{VALUE}/, records[ i ][ titles[ j ] ] );
           }
         }
@@ -626,7 +665,7 @@ Database.prototype = {
       } )();
     }
 
-    this.recordsContainer.querySelector( "table" ).innerHTML = recordsLines;
+    this.recordsContainer.querySelector( "table tbody" ).innerHTML = recordsLines;
     this.recordsContainer.querySelector( ".records-count" ).innerHTML = records.length;
 
     this.records = records;
@@ -678,6 +717,71 @@ Database.prototype = {
 }
 
 /**
+Get Method for Table / Join
+*/
+var getter = function ( expr, order, distinct ) {
+
+  this.lastQuery = {
+    expr: expr,
+    order: order,
+    distinct: distinct
+  };
+
+  var query;
+
+  if ( ! this.lastQuery.expr ) {
+      query = this.query();
+  }
+  else {
+    try {
+      eval( "var query = " + this.lastQuery.expr );
+      query = this.query( query );
+    } catch ( e ) {
+      alert( e );
+    }
+  }
+
+  if ( this.lastQuery.order ) {
+    try {
+      var order = JSON.parse( this.lastQuery.order );
+      query = query.order( order.join( " " ) );
+    } catch ( e ) { 
+      alert( e );
+      query = this.query( query );
+    }
+  }
+
+  if ( this.lastQuery.distinct ) {
+    try {
+      var distincts = JSON.parse( this.lastQuery.distinct );
+      var values = query.distinct.apply( query, JSON.parse( this.lastQuery.distinct ) );
+      var records = new Array();
+      for ( var i = 0; i < values.length; i++ ) { ( function () {
+        var record = new Object();
+        for ( var j = 0; j < distincts.length; j++ ) {
+          if ( values[ i ] instanceof Array ) {
+            record[ distincts[ j ] ] = values[ i ][ j ];
+          }
+          else {
+            record[ distincts[ j ] ] = values[ i ]; 
+          }
+        }
+        records.push( record );          
+      } )() }
+      return records;
+    }
+    catch ( e ) {
+      alert( e );
+      return query.get();
+    }
+  }
+  else {
+    return query.get();
+  }
+
+}
+
+/**
 Table Class
 */
 var Table = function ( args ) {
@@ -685,6 +789,8 @@ var Table = function ( args ) {
   this.name = args.name;
   this.records = args.records;
   this.database = args.database;
+  this.index = new Object();
+  this.lastQuery = { expr: "", order: "", distinct: "" };
   this.initialize();
 }
 Table.prototype = {
@@ -693,11 +799,12 @@ Table.prototype = {
   name : "",
   records: null,
   query: null,
+  index: null,
   template: document.querySelector( ".template-table" ).innerHTML,
   database: null,
   component: null,
   isSelected: false,
-  lastQueryExpr: "",
+  lastQuery: null,
 
   initialize: function () {
     this.query = TAFFY( this.records );
@@ -718,6 +825,28 @@ Table.prototype = {
         table.component.querySelector( ".table" ).style.transition = "none";
       }, 1000 );
     }, 1000 );
+
+  },
+
+  makeIndex: function (　field　) {
+
+    this.index[ field ] = new Object();
+
+    var records = this.query().get();
+    
+    for ( var i = 0; i < records.length; i++ ) {
+      
+      if ( field == "___id" ) {
+        this.index[ field ][ records[ i ][ field ] ] = records[ i ];
+      }
+      else {
+        if ( ! this.index[ field ][ records[ i ][ field ] ] ) {
+          this.index[ field ][ records[ i ][ field ] ] = new Array();        
+        }
+        this.index[ field ][ records[ i ][ field ] ].push( records[ i ][ "___id" ] );
+      }
+
+    }
 
   },
 
@@ -789,22 +918,7 @@ Table.prototype = {
     this.component.querySelector( ".table" ).setAttribute( "class", "table" );
   },
 
-  get: function ( expr ) {
-
-    if ( ! expr ) {
-        return this.query().get();
-    }
-    else {
-      this.lastQueryExpr = expr;
-      try {
-        eval( "var query = " + this.lastQueryExpr );
-        return this.query( query ).get();
-      } catch ( e ) {
-        alert( e );
-      }
-    }
-
-  },
+  get: window.getter,
 
   refresh: function () {
 
@@ -839,6 +953,7 @@ var Join = function ( args ) {
   this.right = args.right;
   this.isReverse = args.isReverse;
   this.database = args.database;
+  this.lastQuery = { expr: "", order: "", distinct: "" };
   this.initialize();
 
 }
@@ -856,53 +971,102 @@ Join.prototype = {
   isSelected: false,
   isReverse: null,
   lastConditionExpr: "",
-  lastQueryExpr: "",
+  lastQuery: null,
 
   initialize: function () {
 
     var join = this;
-    this.matchedLeftIds = new Object();
+    
+    if ( ! join.conditions || ! join.conditions.length ) {
+      this.query = TAFFY( this.left.query().get() );
+      return;
+    }
 
-    var counter = 0;
+    this.left.makeIndex( "___id" );
+    this.right.makeIndex( "___id" );
 
-    var condition = function ( left, right ) {
-console.log( counter++ );
-      if ( ! join.conditions || ! join.conditions.length ) {
-        return false;
-      }
+    for ( var i = 0; i < join.conditions.length; i++ ) {
 
-      var match = true;
-      for ( var i = 0; i < join.conditions.length; i++ ) {
-        if ( left[ join.conditions[ i ][ 0 ] ] !== right[ join.conditions[ i ][ 1 ] ] ) {
-          match = false;
-          break;
-        }
-      }
-      if ( match ) {
-        join.matchedLeftIds[ left.___id ] = true;
-      }
-
-      return match;
+      this.right.makeIndex( join.conditions[ i ][ 1 ] );
 
     }
+
+    var joinIndex = new Array();
+    var leftRecords = this.left.query().get();
+
+    for ( var i = 0; i < leftRecords.length; i++ ) { ( function () {
+
+        var matchedIdCounter = new Object();
+
+        for ( var j = 0; j < join.conditions.length; j++ ) { ( function () {
+
+          var matchedIds = join.right.index[ join.conditions[ j ][ 1 ] ][ leftRecords[ i ][ join.conditions[ j ][ 0 ] ] ]
+          matchedIds = matchedIds ? matchedIds : new Array(); 
+            for ( var k = 0; k < matchedIds.length; k++ ) {
+              if ( matchedIdCounter[ matchedIds[ k ] ] ) {
+                matchedIdCounter[ matchedIds[ k ] ]++;
+              }
+              else {
+                matchedIdCounter[ matchedIds[ k ] ] = 1; 
+              }
+            }
+
+        } )() }
+
+        var candidates = Object.keys( matchedIdCounter );
+        var matchedIds = new Array();
+        for ( var k = 0; k < candidates.length; k++ ) {
+          if ( matchedIdCounter[ candidates[ k ] ] == join.conditions.length ) {
+            matchedIds.push( candidates[ k ] ); 
+          }
+        }
+
+        joinIndex.push( {
+          left: leftRecords[ i ][ "___id" ],
+          right: matchedIds
+        } );
+
+    } )() }
+
+    var joinRecords = new Array();
 
     if ( ! this.isReverse ) {
-      this.query = TAFFY( this.left.query().join( this.right.query, condition ).get() );
+
+      for ( var i = 0; i < joinIndex.length; i++ ) { ( function () {
+        if ( joinIndex[ i ].right.length ) {
+          var leftRecord = join.left.index[ "___id" ][ joinIndex[ i ].left ];
+          var leftFields = Object.keys( leftRecord );
+          for ( var j = 0; j < joinIndex[ i ].right.length; j++ ) { ( function () {
+            var joinRecord = new Object();
+            var rightRecord = join.right.index[ "___id" ][ joinIndex[ i ].right[ j ] ];
+            var rightFields = Object.keys( rightRecord );
+            for ( var k = 0; k < leftFields.length; k++ ) {
+              joinRecord[ leftFields[ k ] ] = leftRecord[ leftFields[ k ] ]
+            }
+            for ( var k = 0; k < rightFields.length; k++ ) { ( function () {
+              var suffix = "";
+              if ( leftRecord[ rightFields[ k ] ] ) {
+                suffix = "_R";
+              }
+              joinRecord[ rightFields[ k ] + suffix ] = rightRecord[ rightFields[ k ] ];
+            } )() }
+            joinRecords.push( joinRecord );
+          } )() }
+        }
+      } )() }
+
     }
-    else {
-      // do join
-      this.left.query().join( this.right.query, condition );
-      // and reverse
-      var unmatchedRecords = new Array();
-      var leftTableRecords = this.left.get();
-      for ( var i = 0; i < leftTableRecords.length; i++ ) {
-          if ( ! this.matchedLeftIds[ leftTableRecords[ i ].___id ] ) {
-            unmatchedRecords.push( leftTableRecords[ i ] );
-          }
-      }
-      this.query = TAFFY( unmatchedRecords );
+    else { // this.isReverse
+
+      for ( var i = 0; i < joinIndex.length; i++ ) { ( function () {
+        if ( ! joinIndex[ i ].right.length ) {
+          joinRecords.push( join.left.index[ "___id" ][ joinIndex[ i ].left ] );
+        }
+      } )() }
+
     }
 
+    this.query = TAFFY( joinRecords );
 
   },
 
@@ -975,34 +1139,23 @@ console.log( counter++ );
   setConditions: function ( expr, isReverse ) {
 
     this.lastConditionExpr = expr;
-    try {
-      eval( "var conditions = " + expr );
-    } catch ( e ) {
-      alert( e );
+    this.conditions = null;
+    if ( this.lastConditionExpr ) {
+      try {
+        eval( "var conditions = " + this.lastConditionExpr );
+        this.conditions = conditions;
+      } catch ( e ) {
+        alert( e );
+      }
     }
-    this.conditions = conditions;
+
     this.isReverse = isReverse;
 
     this.initialize();
 
   },
 
-  get: function ( expr ) {
-
-    if ( ! expr ) {
-      return this.query().get();
-    }
-    else {
-      this.lastQueryExpr = expr;
-      try {
-        eval( "var query = " + this.lastQueryExpr );
-        return this.query( query ).get();
-      } catch ( e ) {
-        alert( e );
-      }
-    }
-
-  },
+  get: window.getter,
 
   refresh: function () {
 
@@ -1014,7 +1167,7 @@ console.log( counter++ );
     this.initialize();
 
     if ( this.isSelected ) {
-      this.database.showRecords( this.get() );
+      this.database.showRecords( this.get( this.lastQuery.expr, this.lastQuery.order, this.lastQuery.distinct ) );
     }
 
     setTimeout( function () {
@@ -1055,8 +1208,9 @@ GlobalSpinner.prototype = {
   spinner: null,
 
   start: function () {
+    this.container.style.height = document.querySelector( "body" ).clientHeight + "px";
     this.spinner.style.top = window.innerHeight / 2 - this.spinner.clientHeight / 2 + "px";
-    this.spinner.style.left = window.innerWidth / 2 - this.spinner.clientWidth / 2 + "px";
+    this.spinner.style.left = window.innerWidth / 2 - this.spinner.clientWidth + "px";
     this.container.style.display = "block";
   },
 
@@ -1087,6 +1241,14 @@ window.onFoul = function () {
   document.querySelector( ".button-import" ).addEventListener( "click", function () {
     window.db.importCsv();
   } );
+
+  var forms = document.querySelectorAll( "form" );
+  for ( var i = 0; i < forms.length; i++ ) {
+    forms[ i ].addEventListener( "submit", function ( event ) {
+      event.preventDefault();
+      return false;
+    } );
+  }
 
 }
 
