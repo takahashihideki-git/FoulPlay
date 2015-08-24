@@ -13,7 +13,7 @@
 		<a href="index.html"><div class="icon icon-index"><span class="icon-label">index</span></div></a>
 	</header>
 	<div class="container article">
-    <div class="pubdate">2015-08-23 22:10</div>
+    <div class="pubdate">2015-08-24 17:45</div>
 		<h1 id="csv-base">CSV Base</h1>
 <p>CSV Base は、ローカルディスクに保存されている CSV ファイルを読み込んで、データベースのようにデータを抽出したり、合成したりするためのアプリです。</p>
 <p><img src="img/csvBase.png" style="display:block;width:60%;margin:2em auto"></p>
@@ -40,7 +40,7 @@
 <pre><code>{ column1: &quot;foo&quot; }
 </code></pre><p>と入力します。</p>
 <p>あるいは、カラム &quot;price&quot; の値が 1500 以上であるレコードを抽出するには、</p>
-<pre><code>{ price: { &quot;&gt;&quot;: 1500 } }
+<pre><code>{ price: { &quot;&gt;=&quot;: 1500 } }
 </code></pre><p>と入力します。</p>
 <p>また、カラム &quot;column1&quot; の値が &quot;foo&quot; で、かつ、カラム &quot;column2&quot; の値が &quot;bar&quot; であるレコードを抽出するには、</p>
 <pre><code>{ column1: &quot;foo&quot;, column2: &quot;bar&quot; }
