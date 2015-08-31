@@ -738,6 +738,7 @@ var getter = function ( expr, order, distinct ) {
       query = this.query( query );
     } catch ( e ) {
       alert( e );
+      globalSpinner.stop();
     }
   }
 
