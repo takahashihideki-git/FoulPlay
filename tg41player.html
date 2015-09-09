@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>tg41player( in Foul )</title>
+<style>
+html {
+    height: 100%;
+}
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+</head>
+<body>
+
+<iframe src="http://tg41player.ohnokenichi.com/"></iframe>
+
+<script>
+
+var foulFrame = null;
+
+document.querySelector( "iframe" ).addEventListener( "load", function () {
+
+    console.log( "loaded" );
+    window.foulFrame = window.frames[0].window;
+
+    // override for confirm
+    window.foulFrame.clearPlaylist = function () {
+
+      var clear = function () {
+          window.foulFrame.$('#playlist').empty();
+          window.foulFrame.$('.icon_playlist').hide();
+          if( window.foulFrame.playCount == 0 ) {
+            window.foulFrame.$('#controller').hide();
+          }
+          window.foulFrame.nowPlaying = 0;
+          window.foulFrame.playlistIds.length = 0;
+      }
+
+      if ( window.foulFrame.$('.added_track').length ) {
+          if( window.confirm( 'Clear Playlist?') ) {
+              clear();
+          }
+      }
+      else {
+          clear();
+      }
+
+      return false;
+
+    }
+
+    // make "playlist first" instraction
+    window.foulFrame.$( "#result" ).append( '<p style="text-align:center;line-height:2;font-weight:bold">or<br><a href="javascript:window.parent.open()">Open Playlist File.</a></p>' )
+
+    // make open, save button
+    makeButtons();
+
+} );
+
+var makePlaylistData = function () {
+
+    if ( ! window.foulFrame ) {
+        return false;
+    }
+
+    var playlist = new Array();
+    var playlistIds = window.foulFrame.playlistIds;
+    var addedResultIds = window.foulFrame.addedResultIds;
+    var resultTrackIds = window.foulFrame.resultTrackIds;
+
+    for ( var i = 0; i < playlistIds.length; i++ ) {
+        ( function () {
+
+                var track = new Object();
+                var html = window.foulFrame.$( ".added_track" ).eq( i );
+
+                track.id = resultTrackIds[ addedResultIds[ playlistIds[ i ] ] ];
+                track.artwork_url = window.foulFrame.$( html ).find( ".track_image img" ).attr( "src" );
+                track.title = window.foulFrame.$( html ).find( ".track_title" ).text().replace( window.foulFrame.$( html ).find( ".play_count" ).text(), "" );
+                var matches = window.foulFrame.$( html ).find( ".play_count" ).text().replace( /,/g, "" ).match(/(\d+)\[\s*([\d:]+)\s*\]/);
+                track.playback_count = matches[ 1 ];
+                var hhmmss = matches[ 2 ].split( ":" );
+                if ( hhmmss.length == 2 ) {
+                    hhmmss.unshift( 0 ); // add hour
+                }
+                track.duration = ( Number( hhmmss[ 0 ] ) * 60 * 60 + Number( hhmmss[ 1 ] ) * 60 + Number( hhmmss[ 2 ] ) ) * 1000;
+
+                playlist.push( track );
+
+        } )();
+    }
+
+    return playlist;
+
+}
+
+var restorePlaylistData = function ( playlist ) {
+
+    if ( ! window.foulFrame ) {
+        return false;
+    }
+
+    window.foulFrame.clearPlaylist();
+    window.foulFrame.$( '#result' ).text('');
+    window.foulFrame.loadTrack( playlist );
+    window.foulFrame.$( ".add_tracks a" ).trigger( "click" );
+
+}
+
+var save = function () {
+
+    window.fileSystem.save( {
+      path: "",
+      content: JSON.stringify( window.makePlaylistData() ),
+      success: function ( path ) {
+        alert( path + " saved." );
+      },
+      error: function ( path, data ) {
+        alert( path + " " + data );
+      }
+    } );
+}
+
+var open = function () {
+
+    window.fileSystem.open( {
+      path: "",
+      success: function ( path, data ) {
+        window.restorePlaylistData( JSON.parse( data ) );
+        window.foulFrame.moveTo( "playlist_area", "fast" );
+      },
+      error: function ( path, data ) {
+        alert( path + " " + data );
+      }
+    } );
+
+}
+
+var makeButtons = function () {
+
+    var $ = window.foulFrame.$;
+    var reference = $( ".icon_playlist" );
+
+    $( reference ).before( '<span class="separate_controller"></span>' );
+    $( reference ).before( '<a href="javascript:void(0);"><button type="button" class="btn btn-default btn-open" aria-label="Left Align"><span class="glyphicon glyphicon-open" aria-hidden="true"></span></button></a>' );
+    $( reference ).before( '<a href="javascript:void(0);"><button type="button" class="btn btn-default btn-save" aria-label="Left Align"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></button></a>' );
+
+    $( ".btn-open" ).on( "click", function () {
+        window.open();
+    } );
+
+    $( ".btn-save" ).css( { "margin-left": "4px" } ).on( "click", function () {
+        window.save();
+    } );
+
+
+}
+
+</script>
+
+</body>
+</html>
