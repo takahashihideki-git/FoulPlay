@@ -6,17 +6,23 @@ var filter = function ( content, context, next ) {
 
 	var parser = new DOMParser();
 	var dom = parser.parseFromString( content, "text/html" )
-	var paragraphs = dom.querySelectorAll( "p" );
+	var paragraphs = dom.querySelectorAll( "h1,h2,h3,h4,h5,h6,h7,p" );
 	var description = "";
 	var descriptionMax = 400;
 
 	for ( var i = 0; i < paragraphs.length; i++ ) {
+		if ( paragraphs[ i ].tagName == "H1" ) {
+			continue;
+		}
+		if ( paragraphs[ i ].tagName.match( /^H/ ) ) {
+			break;
+		}
 		description += paragraphs[ i ].innerText;
 		if ( description.length > descriptionMax ) {
 			break;
 		}
 	}
-	description = description.substr( 0, descriptionMax ); 
+	description = description.substr( 0, descriptionMax );
 	var image = dom.querySelector( "img" );
 	var imageSrc = "";
 	if ( image ) {
@@ -35,7 +41,7 @@ var filter = function ( content, context, next ) {
 		context.globalContext.done = 1;
 	}
 	else {
-		context.globalContext.done++;	
+		context.globalContext.done++;
 	}
 
 	if ( context.globalContext.done == context.globalContext.filesLength ) {
@@ -78,7 +84,7 @@ var filter = function ( content, context, next ) {
             path: feedPath,
             content: feed.xml( "  " ),
             success: function ( path ) {
-                Pipeline.log( "Save: " + path ) 
+                Pipeline.log( "Save: " + path )
             },
             error: function ( path, error ) {
                 Pipeline.error( "Can't save: " + path )

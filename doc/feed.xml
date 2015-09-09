@@ -5,22 +5,31 @@
     <description><![CDATA[SPAs on Foul]]></description>
     <link>http://takahashihideki-git.github.io/FoulPlay/doc/index.html</link>
     <generator>RSS for Node</generator>
-    <lastBuildDate>Mon, 24 Aug 2015 08:49:13 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 09 Sep 2015 13:12:08 GMT</lastBuildDate>
     <atom:link href="http://takahashihideki-git.github.io/FoulPlay/doc/rss.xml" rel="self" type="application/rss+xml"/>
     <author><![CDATA[takahashihideki]]></author>
     <copyright><![CDATA[takahashihideki]]></copyright>
     <item>
+      <title><![CDATA[tg41player (in Foul)]]></title>
+      <description><![CDATA[tg41player (in Foul) は、Sound Cloud の音源をすばやくプレイリストにして楽しむことができるWebアプリ tg41player に、作成したプレイリストをローカルファイルとして保存する機能を追加するためのアプリです。アプリといっても、github に公開されているソースコードを再利用して Foul 用のアプリとして拡張したわけではなく、iframe に読み込んだ tg41player の画面上に、プレイリストの保存と読み込みのためのボタンを挿入するだけの、従来のブラウザでいえば、いわばブックマークレットや拡張機能の一種です。]]></description>
+      <link>http://takahashihideki-git.github.io/FoulPlay/doc/tg41player.html</link>
+      <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/tg41player.html</guid>
+      <dc:creator><![CDATA[takahashihideki]]></dc:creator>
+      <pubDate>Wed, 09 Sep 2015 13:02:16 GMT</pubDate>
+      <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/tg41player.png</image>
+    </item>
+    <item>
       <title><![CDATA[CSV Base]]></title>
-      <description><![CDATA[CSV Base は、ローカルディスクに保存されている CSV ファイルを読み込んで、データベースのようにデータを抽出したり、合成したりするためのアプリです。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/csvBase.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、CSV Base に CSVファイルを読み込めるようになります。「Import」ボタンをクリックすると、ファイル選択ダイアログが開きます。CSV ファイル（文字コードは UTF8 のみに対応しています）を選択すると、読み込まれた CSV ファイルに対応するテーブルオブジェクトが画面上に作]]></description>
+      <description><![CDATA[CSV Base は、ローカルディスクに保存されている CSV ファイルを読み込んで、データベースのようにデータを抽出したり、合成したりするためのアプリです。]]></description>
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/csvBase.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/csvBase.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
-      <pubDate>Mon, 24 Aug 2015 08:45:31 GMT</pubDate>
+      <pubDate>Mon, 24 Aug 2015 08:49:07 GMT</pubDate>
       <image>http://takahashihideki-git.github.io/FoulPlay/doc/img/csvBase.png</image>
     </item>
     <item>
       <title><![CDATA[Simple Http Server]]></title>
-      <description><![CDATA[Simple Http Server は、簡易的な Local Network (LAN) HTTP サーバーとして動作するアプリです。ローカルファイルシステムの任意のフォルダをドキュメントルートに指定することができます。また、サーバーの起動中、いつでもドキュメントルートを別のフォルダに切り替えることができます。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/simpleHttpServer.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、Local Network HTTPサーバーが起動します。HTTPサーバーが起動すると、「host」欄に、IPアド]]></description>
+      <description><![CDATA[Simple Http Server は、簡易的な Local Network (LAN) HTTP サーバーとして動作するアプリです。ローカルファイルシステムの任意のフォルダをドキュメントルートに指定することができます。また、サーバーの起動中、いつでもドキュメントルートを別のフォルダに切り替えることができます。]]></description>
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/simpleHttpServer.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/simpleHttpServer.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
@@ -29,7 +38,7 @@
     </item>
     <item>
       <title><![CDATA[Diff Two Urls]]></title>
-      <description><![CDATA[Diff Two Urls は、2つの URL の HTTP レスポンスボディの内容を比較するためのアプリです。実体は、mergely です。制約のない Cross-Origin XMLHttpRequest を実行できる Foul で mergely を動作させることによって、ドメインを超えた「diff」を自由に実行できるようになります。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/diffTwoUrls.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、Cross-Origin XMLHttpRequest を実行できるようになります。左右のペイン]]></description>
+      <description><![CDATA[Diff Two Urls は、2つの URL の HTTP レスポンスボディの内容を比較するためのアプリです。実体は、mergely です。制約のない Cross-Origin XMLHttpRequest を実行できる Foul で mergely を動作させることによって、ドメインを超えた「diff」を自由に実行できるようになります。]]></description>
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/diffTwoUrls.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>
@@ -38,7 +47,7 @@
     </item>
     <item>
       <title><![CDATA[Markdown Editor]]></title>
-      <description><![CDATA[Markdown Editor は、マークダウン形式でマークアップされたテキストを編集し、HTMLコードへの変換結果をプレビューし、ローカルファイルとして保存するためのアプリです。HTMLコードへの変換には、marked を使用しています。下記の URL を Foul のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。http://takahashihideki-git.github.io/FoulPlay/markdownEditor.htmlその後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、ローカルファイルシステムにアクセスできるようになります。左側のペインにマークアップテキストを記述すると、即座にHTMLコードへの変換され、ブラウザにレンダリングされた結果が右側のペインに表示さ]]></description>
+      <description><![CDATA[Markdown Editor は、マークダウン形式でマークアップされたテキストを編集し、HTMLコードへの変換結果をプレビューし、ローカルファイルとして保存するためのアプリです。HTMLコードへの変換には、marked を使用しています。]]></description>
       <link>http://takahashihideki-git.github.io/FoulPlay/doc/markdownEditor.html</link>
       <guid isPermaLink="true">http://takahashihideki-git.github.io/FoulPlay/doc/markdownEditor.html</guid>
       <dc:creator><![CDATA[takahashihideki]]></dc:creator>

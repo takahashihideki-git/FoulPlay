@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <title>Foul Play</title>
 <link rel="alternate" type="application/atom+xml" href="http://takahashihideki-git.github.io/FoulPlay/doc/feed.xml" title="Foul Play" />
-<link rel="stylesheet" href="../css/bootstrap.min.css"> 
-<link rel="stylesheet" href="css/style.css"> 
+<link rel="stylesheet" href="../css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
 <style>
 .tagline {
 	position: absolute;
@@ -22,6 +22,11 @@
 .item {
 	padding-bottom: 3em;
 	border-bottom: 1px dotted #ccc;
+}
+.item:after {
+    content: " ";
+    display: block;
+    clear: both;
 }
 .item:last-child {
 	border: 0;
@@ -123,12 +128,12 @@ var zeroPadding = function ( number, length ) {
 }
 
 var paragraphize = function ( text ) {
-	return text.split( "。" ).map( function ( value, index, array ) { 
+	return text.split( "。" ).map( function ( value, index, array ) {
 		if ( index == array.length - 1 ) {
 			value = "<p class='last'>" + value + "</p>"
 		}
 		else {
-			value = "<p>" + value + "。</p>" 
+			value = "<p>" + value + "。</p>"
 		}
 		return value;
 	} ).join( "" );

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>tg41player (in Foul)</title>
+<link rel="alternate" type="application/atom+xml" href="http://takahashihideki-git.github.io/FoulPlay/doc/feed.xml" title="Foul Play" />
+<link rel="stylesheet" href="../css/bootstrap.min.css"> 
+<link rel="stylesheet" href="css/style.css"> 
+</head>
+<body>
+	<header>
+		<h1>Foul Play</h1>
+		<a href="index.html"><div class="icon icon-index"><span class="icon-label">index</span></div></a>
+	</header>
+	<div class="container article">
+    <div class="pubdate">2015-09-09 22:02</div>
+		<h1 id="tg41player-in-foul-">tg41player (in Foul)</h1>
+<p>tg41player (in Foul) は、Sound Cloud の音源をすばやくプレイリストにして楽しむことができるWebアプリ <a href="http://ohnokenichi.tumblr.com/post/128479797205/soundcloud%E3%81%AEapi%E3%81%A7%E3%82%AA%E3%83%AA%E3%82%B8%E3%83%8A%E3%83%AB%E3%81%AE%E3%83%9F%E3%83%A5%E3%83%BC%E3%82%B8%E3%83%83%E3%82%AF%E3%83%97%E3%83%AC%E3%82%A4%E3%83%A4%E3%83%BC%E3%82%92%E3%81%A4%E3%81%8F%E3%82%8A%E3%81%BE%E3%81%97%E3%81%9F">tg41player</a> に、作成したプレイリストをローカルファイルとして保存する機能を追加するためのアプリです。</p>
+<p><img src="img/tg41player.png" style="display:block;width:60%;margin:2em auto"></p>
+<p>アプリといっても、<a href="https://github.com/ohnokenichi/tg41player">github に公開されているソースコード</a>を再利用して Foul 用のアプリとして拡張したわけではなく、iframe に読み込んだ <a href="http://tg41player.ohnokenichi.com/">tg41player</a> の画面上に、プレイリストの保存と読み込みのためのボタンを挿入するだけの、従来のブラウザでいえば、いわばブックマークレットや拡張機能の一種です。</p>
+<h2 id="-">使い方</h2>
+<h3 id="foul-">Foul にショートカットを登録</h3>
+<p>下記の URL を <a href="https://github.com/takahashihideki-git/Foul">Foul</a> のアドレス欄に入力して表示します。表示されたら、アドレス欄の右にある「+」 ボタンをクリックして、ショートカットに登録します。</p>
+<p><a href="http://takahashihideki-git.github.io/FoulPlay/tg41player.html">http://takahashihideki-git.github.io/FoulPlay/tg41player.html</a></p>
+<p>その後、リロードするか、ホーム画面に追加されたアイコンをクリックして再表示すると、プレイリスト保存機能を利用できるようになります。</p>
+<h3 id="-">プレイリストを保存する</h3>
+<p>プレイリストを作成すると表示される画面最下部のプレイリストコントローラにある保存ボタン（上向き矢印のボタン）をクリックすると、プレイリストファイルの保存先を指定するためのダイアログが表示されます。</p>
+<p>プレイリストファイルの内容は JSON形式のテキストデータです。任意のファイル名で保存することができます。</p>
+<h3 id="-">プレイリストファイルを読み込む</h3>
+<p>初期画面に表示されている「Open Playlist File」をクリックすると、プレイリストファイルを選択するためのダイアログが表示されます。</p>
+<p>プレイリストファイルを選択して読み込むと、画面上にプレイリストが表示されます。</p>
+<p>いったんプレイリストを表示した後は、画面最下部のプレイリストコントローラにある読み込みボタン（下向き矢印のボタン）をクリックして、プレイリストファイルを読み込むことができます。</p>
+
+		<a href="index.html"><div class="icon icon-index icon-index-bottom"><span class="icon-label">index</span></div></a>
+	</div>
+	<footer>&copy; <a href="https://github.com/takahashihideki-git">takahashihideki</a></footer>
+</body>
+</html>
